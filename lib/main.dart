@@ -13,10 +13,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.orange,
         
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'LE JEU DE ZINZIN'),
     );
   }
 }
@@ -35,26 +35,27 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () => navigateTo(context, FlagsScreen()),
-              child: const Text('Mode solo'),
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Mode 2 joueurs'),
-            ),
-            ElevatedButton(
-              onPressed: () {},
-              child: const Text('Mode 3 joueurs'),
-            ),
-          ],
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("lib/assets/fond_ecran.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () => navigateTo(context, const ChallengeScreen()),
+                child: const Text('Mode Solo'),
+              ),
+              ElevatedButton(
+                onPressed: () {},
+                child: const Text('Mode Multi'),
+              ),
+            ],
+          ),
         ),
       ),
     );
