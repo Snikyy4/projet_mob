@@ -39,9 +39,22 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: ElevatedButton(
-          onPressed: () => navigateTo(context, const ChallengeScreen()),
-          child: const Text('Jouer'),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () => navigateTo(context, FlagsScreen()),
+              child: const Text('Mode solo'),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Mode 2 joueurs'),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Mode 3 joueurs'),
+            ),
+          ],
         ),
       ),
     );
