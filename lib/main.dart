@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'page_defi1.dart'; //import du fichier pour le défi 1
 
 void main() {
   runApp(const MyApp());
@@ -30,13 +31,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-   _navigateTo(Widget destinationPage) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) =>  destinationPage),
-    );
-  }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: ElevatedButton(
-          onPressed: _navigateTo(const ChallengeScreen()),
+          onPressed: () => navigateTo(context, const ChallengeScreen()),
           child: const Text('Jouer'),
         ),
       ),
@@ -67,7 +62,7 @@ class ChallengeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: (){},
+              onPressed: () => navigateTo(context, const Defi1Screen()),
               child: const Text('Défi 1'),
             ),
             ElevatedButton(
@@ -83,4 +78,11 @@ class ChallengeScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+void navigateTo(BuildContext context, Widget destinationPage) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(builder: (context) => destinationPage),
+  );
 }
