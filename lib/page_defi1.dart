@@ -2,13 +2,13 @@
 import 'package:flutter/material.dart';
 
 class FlagsScreen extends StatelessWidget {
-  final List<Flag> _flags = [    Flag(name: 'France', image: 'assets/france.png'),    Flag(name: 'Allemagne', image: 'assets/allemagne.png'),    Flag(name: 'Italie', image: 'assets/italie.png'),    Flag(name: 'Espagne', image: 'assets/espagne.png'),  ];
+  final List<Flag> _flags = [    Flag(name: 'France', image: 'lib/assets/france.png'),    Flag(name: 'Allemagne', image: 'lib/assets/allemagne.png'),    Flag(name: 'Italie', image: 'lib/assets/italie.png'),    Flag(name: 'Espagne', image: 'lib/assets/espagne.png'),  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Jeu des drapeaux'),
+        title: const Text('Jeu des drapeaux'),
       ),
       body: ListView.builder(
         itemCount: _flags.length,
@@ -21,7 +21,7 @@ class FlagsScreen extends StatelessWidget {
               ),
             ),
             child: Container(
-              padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
               child: Row(
                 children: [
                   Image.asset(
@@ -29,10 +29,10 @@ class FlagsScreen extends StatelessWidget {
                     width: 50,
                     height: 50,
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     _flags[index].name,
-                    style: TextStyle(fontSize: 20),
+                    style: const TextStyle(fontSize: 20),
                   ),
                 ],
               ),
@@ -69,10 +69,10 @@ class _GuessFlagScreenState extends State<GuessFlagScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Devinez le pays'),
+        title: const Text('Devinez le pays'),
       ),
       body: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: Column(
           children: [
             Image.asset(
@@ -80,25 +80,25 @@ class _GuessFlagScreenState extends State<GuessFlagScreen> {
               width: 150,
               height: 150,
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             TextField(
               onChanged: (value) {
                 setState(() {
                   _guess = value;
                 });
               },
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 hintText: 'Entrez le nom du pays',
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _checkGuess,
-              child: Text('Valider'),
+              child: const Text('Valider'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             if (_correct)
-              Text(
+              const Text(
                 'Bravo, vous avez deviné!',
                 style: TextStyle(fontSize: 20),
               ),
