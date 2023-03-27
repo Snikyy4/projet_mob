@@ -62,7 +62,7 @@ class ChallengeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () => navigateTo(context, const Defi1Screen()),
+              onPressed: () => navigateTo(context, FlagsScreen()),
               child: const Text('Défi 1'),
             ),
             ElevatedButton(
