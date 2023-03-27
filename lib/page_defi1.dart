@@ -1,107 +1,139 @@
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-class FlagsScreen extends StatelessWidget {
-  final List<Flag> _flags = [    Flag(name: 'France', image: 'lib/assets/france.png'),    Flag(name: 'Allemagne', image: 'lib/assets/allemagne.png'),    Flag(name: 'Italie', image: 'lib/assets/italie.png'),    Flag(name: 'Espagne', image: 'lib/assets/espagne.png'),  ];
+class FlagsScreen extends StatefulWidget {
+  @override
+  _FlagsScreenState createState() => _FlagsScreenState();
+}
+
+class _FlagsScreenState extends State<FlagsScreen> {
+  final List<Flag> _flags = [
+    Flag(name: 'France', image: 'lib/assets/france.png'),
+    Flag(name: 'Allemagne', image: 'lib/assets/allemagne.png'),
+    Flag(name: 'Italie', image: 'lib/assets/italie.png'),
+    Flag(name: 'Espagne', image: 'lib/assets/espagne.png'),
+  ];
+  Flag? _currentFlag;
+  String _inputValue = '';
+  Set<Flag> _usedFlags = {};
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Jeu des drapeaux'),
-      ),
-      body: ListView.builder(
-        itemCount: _flags.length,
-        itemBuilder: (BuildContext context, int index) {
-          return GestureDetector(
-            onTap: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GuessFlagScreen(flag: _flags[index]),
-              ),
+  void initState() {
+    super.initState();
+    _currentFlag = _flags[0];
+  }
+
+  void _onGuess(String guess) {
+  if (_currentFlag != null && guess.toLowerCase() == _currentFlag!.name.toLowerCase()) {
+    final oldFlagName = _currentFlag!.name;
+    _usedFlags.add(_currentFlag!);
+    setState(() {
+      if (_usedFlags.length == _flags.length) {
+        _usedFlags.clear();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Fin du jeu!'),
+              content: const Text('Vous avez terminé le jeu!'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        int randomIndex;
+        do {
+          randomIndex = Random().nextInt(_flags.length);
+        } while (_usedFlags.contains(_flags[randomIndex]));
+        _currentFlag = _flags[randomIndex];
+        _inputValue = '';
+      }
+    });
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Bravo!'),
+          content: Text('Vous avez deviné le drapeau $oldFlagName'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Continuer'),
             ),
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-              child: Row(
-                children: [
-                  Image.asset(
-                    _flags[index].image,
-                    width: 50,
-                    height: 50,
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    _flags[index].name,
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                ],
-              ),
+          ],
+        );
+      },
+    );
+  } else {
+     _usedFlags.add(_currentFlag!);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Incorrect'),
+          content: Text('La réponse est incorrecte.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                setState(() {
+                  int randomIndex;
+                  do {
+                    randomIndex = Random().nextInt(_flags.length);
+                  } while (_usedFlags.contains(_flags[randomIndex]));
+                  _currentFlag = _flags[randomIndex];
+                  _inputValue = '';
+                });
+              },
+              child: const Text('OK'),
             ),
-          );
-        },
-      ),
+          ],
+        );
+      },
     );
   }
 }
 
-class GuessFlagScreen extends StatefulWidget {
-  final Flag flag;
-
-  GuessFlagScreen({required this.flag});
-
-  @override
-  _GuessFlagScreenState createState() => _GuessFlagScreenState();
-}
-
-class _GuessFlagScreenState extends State<GuessFlagScreen> {
-  String _guess = '';
-  bool _correct = false;
-
-  void _checkGuess() {
-    if (_guess.toLowerCase() == widget.flag.name.toLowerCase()) {
-      setState(() {
-        _correct = true;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Devinez le pays'),
+       
+
+        title: const Text('Jeu des drapeaux'),
       ),
       body: Container(
         padding: const EdgeInsets.all(20),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              widget.flag.image,
+              _currentFlag!.image,
               width: 150,
               height: 150,
             ),
             const SizedBox(height: 20),
             TextField(
               onChanged: (value) {
-                setState(() {
-                  _guess = value;
-                });
+                _inputValue = value;
               },
+              onSubmitted: _onGuess,
               decoration: const InputDecoration(
                 hintText: 'Entrez le nom du pays',
               ),
+              controller: TextEditingController(text: _inputValue), // utiliser un controller pour afficher la valeur actuelle de _inputValue dans le champ de texte
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _checkGuess,
-              child: const Text('Valider'),
-            ),
-            const SizedBox(height: 20),
-            if (_correct)
-              const Text(
-                'Bravo, vous avez deviné!',
-                style: TextStyle(fontSize: 20),
-              ),
           ],
         ),
       ),
@@ -110,6 +142,8 @@ class _GuessFlagScreenState extends State<GuessFlagScreen> {
 }
 
 class Flag {
+ 
+
   final String name;
   final String image;
 
