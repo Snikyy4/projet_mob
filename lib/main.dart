@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'page_defi1.dart'; //import du fichier pour le défi 1
+import 'database.dart';
+
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.orange,
         
       ),
-      home: const MyHomePage(title: 'LE JEU DE ZINZIN'),
+      home: const LoginPage(),
     );
   }
 }
@@ -25,13 +27,11 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,15 +77,27 @@ class ChallengeScreen extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () => navigateTo(context, FlagsScreen()),
-              child: const Text('Défi 1'),
+              child: const Text('Jeu des drapeaux'),
             ),
             ElevatedButton(
               onPressed: () {},
-              child: const Text('Défi 2'),
+              child: const Text("Lequel n'a pas"),
             ),
             ElevatedButton(
               onPressed: () {},
               child: const Text('Défi 3'),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Défi 4'),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Défi 5'),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text('Défi 6'),
             ),
           ],
         ),

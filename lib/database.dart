@@ -1,27 +1,181 @@
-import 'package:path/path.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:flutter/material.dart';
+import 'package:projet_mob/main.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
-// Fonction qui ouvre la DB
-Future<Database> openDB() async {
-  final dbPath = await getDatabasesPath();
-  return openDatabase(
-    join(dbPath, 'auth.db'),
-    onCreate: (db, version) async {
-      await db.execute(
-        'CREATE TABLE users(id INTEGER PRIMARY KEY, username TEXT, password TEXT)',
-      );
-    },
-    version: 1,
-  );
+
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
+
+  @override
+  _LoginPageState createState() => _LoginPageState();
 }
 
-// Ajoute un user dans la db
-Future<void> addUser(String username, String password) async {
-  final db = await openDB();
-  await db.insert(
+class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  final _usernameController = TextEditingController();
+  final _passwordController = TextEditingController();
+  late Database _database;
+
+  @override
+  void initState() {
+    super.initState();
+    _initDatabase();
+  }
+
+  Future<void> _initDatabase() async {
+    final databasesPath = await getDatabasesPath();
+    final path = join(databasesPath, 'myapp.db');
+
+    _database = await openDatabase(path, version: 1, onCreate: (db, version) {
+      db.execute('''
+        CREATE TABLE Users (
+          id INTEGER PRIMARY KEY,
+          username TEXT UNIQUE,
+          password TEXT,
+          nbVictoire TEXT
+        )
+      ''');
+    });
+  }
+
+  Future<Map<String, dynamic>> _getUserByUsername(String username) async {
+  final db = await _database;
+  final user = await db.query(
     'users',
-    {'username': username, 'password': password},
-    conflictAlgorithm: ConflictAlgorithm.replace,
+    where: 'username = ?',
+    whereArgs: [username],
+    limit: 1,
   );
+  return user.isNotEmpty ? user.first : {};
+}
+
+  Future<void> _saveUser(String username, String password, String nbVictoire) async {
+    final user = {
+      'username': username,
+      'password': password,
+      'nbVictoire' : nbVictoire
+    };
+    await _database.insert('Users', user);
+  }
+
+  void _onSubmit() async {
+    if (_formKey.currentState?.validate() ?? false) {
+      final username = _usernameController.text;
+      final password = _passwordController.text;
+
+      final user = await _getUserByUsername(username);
+      if (user.isEmpty) {
+        await _saveUser(username, password,'0');
+        showDialog(
+          context: this.context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Inscription'),
+              content: const Text('Inscription réussie'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    navigateTo(context, const MyHomePage(title: "POTIN - LEQUERTIER"));
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else if (user['password'] == password) {
+        showDialog(
+          context: this.context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Connexion'),
+              content: const Text('Connexion réussie'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    navigateTo(context,  MyHomePage(title: user['username']));
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: this.context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Connexion'),
+              content: const Text('Mot de passe incorrect ou username déjà utilisé'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    _database.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Login Page'),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _usernameController,
+                decoration: const InputDecoration(
+                  labelText: 'Username',
+                ),
+                validator: (value) {
+                  if (value?.isEmpty ?? true) return 'Username';
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _passwordController,
+                decoration: const InputDecoration(
+                  labelText: 'Mot de passe',
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value?.isEmpty ?? true) return 'Mot de passe';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: _onSubmit,
+                child: const Text('Submit'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

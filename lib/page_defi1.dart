@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:projet_mob/main.dart';
 
 class FlagsScreen extends StatefulWidget {
   @override
@@ -41,6 +42,7 @@ class _FlagsScreenState extends State<FlagsScreen> {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    navigateTo(context, const ChallengeScreen());
                   },
                   child: const Text('OK'),
                 ),
@@ -108,8 +110,6 @@ class _FlagsScreenState extends State<FlagsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-       
-
         title: const Text('Jeu des drapeaux'),
       ),
       body: Container(
