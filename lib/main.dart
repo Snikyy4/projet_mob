@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'challenge_screen.dart';
 import 'database.dart';
 
+String nom_user = '';
+int nb_victoires = 0;
+double temps_taupe = -1;
+
 void main() {
   runApp(const MyApp());
 }
@@ -22,11 +26,12 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.pseudo, required this.nbVictoires})
+  const MyHomePage({Key? key, required this.pseudo, required this.nbVictoires, required this.tempsTaupe})
       : super(key: key);
 
   final String pseudo;
-  final String nbVictoires;
+  final int nbVictoires;
+  final double tempsTaupe;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -34,12 +39,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String pseudo = '';
-  String nbVictoires = '';
+  int nbVictoires = 0;
+  double tempsTaupe = -1;
   @override
   void initState() {
     super.initState();
-    pseudo = widget.pseudo;
-    nbVictoires = widget.nbVictoires;
+    nom_user = widget.pseudo;
+    nb_victoires = widget.nbVictoires;
+    temps_taupe = widget.tempsTaupe;
+
+
   }
 
   @override
@@ -84,7 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     horizontal: 8,
                   ),
                   child: Text(
-                    '$pseudo | $nbVictoires victoire(s)',
+                    '$nom_user | $nb_victoires victoire(s)',
                     style: const TextStyle(
                       fontFamily: 'Roboto',
                       fontSize: 20, // la taille de la police en pixels

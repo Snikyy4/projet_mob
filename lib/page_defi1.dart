@@ -5,6 +5,8 @@ import 'package:projet_mob/main.dart';
 import 'challenge_screen.dart';
 
 class FlagsScreen extends StatefulWidget {
+  const FlagsScreen({super.key});
+
   @override
   _FlagsScreenState createState() => _FlagsScreenState();
 }
@@ -84,7 +86,7 @@ class _FlagsScreenState extends State<FlagsScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Incorrect'),
-          content: Text('La réponse est incorrecte.'),
+          content: const Text('La réponse est incorrecte.'),
           actions: [
             TextButton(
               onPressed: () {

@@ -26,14 +26,15 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _initDatabase() async {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, 'myapp.db');
-    //await deleteDatabase(path); si on veut remettre à jour la BDD
+    //await deleteDatabase(path); //si on veut remettre à jour la BDD
     _database = await openDatabase(path, version: 1, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE Users (
           id INTEGER PRIMARY KEY,
           username TEXT UNIQUE,
           password TEXT,
-          nbVictoires TEXT
+          nbVictoires INTEGER,
+          tempsTaupe REAL
         )
       ''');
     });
@@ -50,25 +51,40 @@ class _LoginPageState extends State<LoginPage> {
     return user.isNotEmpty ? user.first : {};
   }
 
-  Future<String> getVictoriesByUsername(String username) async {
+  Future<int> getVictoriesByUsername(String username) async {
       final db = await _database;
       final result = await db.rawQuery(
         'SELECT nbVictoires FROM Users WHERE username = ?',
         [username],
       );
       if (result.isNotEmpty) {
-        return result.first['nbVictoires'] as String;
+        return result.first['nbVictoires'] as int;
       } else {
-        return '';
+        return 0;
       }
     }
 
+    Future<double> getTempsTaupeByUsername(String username) async {
+      final db = await _database;
+      final result = await db.rawQuery(
+        'SELECT tempsTaupe FROM Users WHERE username = ?',
+        [username],
+      );
+      if (result.isNotEmpty) {
+        return result.first['tempsTaupe'] as double;
+      } else {
+        return 0;
+      }
+    }
+
+
   Future<void> _saveUser(
-      String username, String password, String nbVictoires) async {
+      String username, String password, int nbVictoires, int tempsTaupe) async {
     final user = {
       'username': username,
       'password': password,
-      'nbVictoires': nbVictoires
+      'nbVictoires': nbVictoires,
+      'tempsTaupe': tempsTaupe
     };
     await _database.insert('Users', user);
   }
@@ -80,7 +96,7 @@ class _LoginPageState extends State<LoginPage> {
 
       final user = await _getUserByUsername(username);
       if (user.isEmpty) {
-  await _saveUser(username, password, '0');
+  await _saveUser(username, password, 0, -1);
 
   showDialog(
     context: this.context,
@@ -93,8 +109,7 @@ class _LoginPageState extends State<LoginPage> {
             child: const Text('OK'),
             onPressed: () async {
               Navigator.of(context).pop();
-              final nbVictoires = await getVictoriesByUsername(username);
-              navigateTo(context, MyHomePage(pseudo: username, nbVictoires: nbVictoires));
+              navigateTo(context, MyHomePage(pseudo: username, nbVictoires: 0, tempsTaupe: -1,));
             },
           ),
         ],
@@ -114,7 +129,8 @@ class _LoginPageState extends State<LoginPage> {
             onPressed: () async {
               Navigator.of(context).pop();
               final nbVictoires = await getVictoriesByUsername(username);
-              navigateTo(context, MyHomePage(pseudo: username, nbVictoires: nbVictoires));
+              final tempsTaupe = await getTempsTaupeByUsername(username);
+              navigateTo(context, MyHomePage(pseudo: username, nbVictoires: nbVictoires, tempsTaupe: tempsTaupe));
             },
           ),
         ],

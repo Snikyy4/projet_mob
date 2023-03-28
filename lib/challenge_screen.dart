@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'page_defi1.dart'; //import du fichier pour le défi 1
 import 'main.dart';
+import 'taupes.dart';
 
 
 class ChallengeScreen extends StatelessWidget {
@@ -17,7 +18,7 @@ class ChallengeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () => navigateTo(context, FlagsScreen()),
+              onPressed: () => navigateTo(context, const FlagsScreen()),
               child: const Text('Jeu des drapeaux'),
             ),
             ElevatedButton(
@@ -25,8 +26,8 @@ class ChallengeScreen extends StatelessWidget {
               child: const Text("Lequel n'a pas"),
             ),
             ElevatedButton(
-              onPressed: () {},
-              child: const Text('Défi 3'),
+              onPressed: () => navigateTo(context, MoleGame()),
+              child: Text('Jeu des taupes | Record : $temps_taupe secondes'),
             ),
             ElevatedButton(
               onPressed: () {},
