@@ -3,7 +3,6 @@ import 'package:projet_mob/main.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
@@ -21,40 +20,55 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _initDatabase();
+    
   }
 
   Future<void> _initDatabase() async {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, 'myapp.db');
-
+    //await deleteDatabase(path); si on veut remettre à jour la BDD
     _database = await openDatabase(path, version: 1, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE Users (
           id INTEGER PRIMARY KEY,
           username TEXT UNIQUE,
           password TEXT,
-          nbVictoire TEXT
+          nbVictoires TEXT
         )
       ''');
     });
   }
 
   Future<Map<String, dynamic>> _getUserByUsername(String username) async {
-  final db = await _database;
-  final user = await db.query(
-    'users',
-    where: 'username = ?',
-    whereArgs: [username],
-    limit: 1,
-  );
-  return user.isNotEmpty ? user.first : {};
-}
+    final db = await _database;
+    final user = await db.query(
+      'users',
+      where: 'username = ?',
+      whereArgs: [username],
+      limit: 1,
+    );
+    return user.isNotEmpty ? user.first : {};
+  }
 
-  Future<void> _saveUser(String username, String password, String nbVictoire) async {
+  Future<String> getVictoriesByUsername(String username) async {
+      final db = await _database;
+      final result = await db.rawQuery(
+        'SELECT nbVictoires FROM Users WHERE username = ?',
+        [username],
+      );
+      if (result.isNotEmpty) {
+        return result.first['nbVictoires'] as String;
+      } else {
+        return '';
+      }
+    }
+
+  Future<void> _saveUser(
+      String username, String password, String nbVictoires) async {
     final user = {
       'username': username,
       'password': password,
-      'nbVictoire' : nbVictoire
+      'nbVictoires': nbVictoires
     };
     await _database.insert('Users', user);
   }
@@ -66,64 +80,70 @@ class _LoginPageState extends State<LoginPage> {
 
       final user = await _getUserByUsername(username);
       if (user.isEmpty) {
-        await _saveUser(username, password,'0');
-        showDialog(
-          context: this.context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Inscription'),
-              content: const Text('Inscription réussie'),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    navigateTo(context, const MyHomePage(title: "POTIN - LEQUERTIER"));
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else if (user['password'] == password) {
-        showDialog(
-          context: this.context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Connexion'),
-              content: const Text('Connexion réussie'),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    navigateTo(context,  MyHomePage(title: user['username']));
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      } else {
-        showDialog(
-          context: this.context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text('Connexion'),
-              content: const Text('Mot de passe incorrect ou username déjà utilisé'),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
+  await _saveUser(username, password, '0');
+
+  showDialog(
+    context: this.context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Inscription'),
+        content: const Text('Inscription réussie'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              final nbVictoires = await getVictoriesByUsername(username);
+              navigateTo(context, MyHomePage(pseudo: username, nbVictoires: nbVictoires));
+            },
+          ),
+        ],
+      );
+    },
+  );
+} else if (user['password'] == password) {
+  showDialog(
+    context: this.context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Connexion'),
+        content: const Text('Connexion réussie'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () async {
+              Navigator.of(context).pop();
+              final nbVictoires = await getVictoriesByUsername(username);
+              navigateTo(context, MyHomePage(pseudo: username, nbVictoires: nbVictoires));
+            },
+          ),
+        ],
+      );
+    },
+  );
+} else {
+  showDialog(
+    context: this.context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Connexion'),
+        content:
+            const Text('Mot de passe incorrect ou username déjà utilisé'),
+        actions: <Widget>[
+          TextButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
     }
+
+    
   }
 
   @override

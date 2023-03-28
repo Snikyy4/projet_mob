@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:projet_mob/main.dart';
+import 'challenge_screen.dart';
 
 class FlagsScreen extends StatefulWidget {
   @override
