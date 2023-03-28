@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.pseudo,required this.nbVictoires}) : super(key: key);
+  const MyHomePage({Key? key, required this.pseudo, required this.nbVictoires})
+      : super(key: key);
 
   final String pseudo;
   final String nbVictoires;
@@ -41,7 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     nbVictoires = widget.nbVictoires;
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
@@ -72,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
             Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.all(15.0),
+                padding: const EdgeInsets.all(70.0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.blue,
@@ -82,7 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
                     vertical: 4,
                     horizontal: 8,
                   ),
-                  child: Text(pseudo + ' | '+nbVictoires + ' victoire(s)'),
+                  child: Text(
+                    '$pseudo | $nbVictoires victoire(s)',
+                    style: const TextStyle(
+                      fontFamily: 'Roboto',
+                      fontSize: 20, // la taille de la police en pixels
+                      fontWeight:
+                          FontWeight.bold, // le poids de la police (en gras)
+                      color: Colors.white, // la couleur du texte
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -92,8 +102,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
-
 
 void navigateTo(BuildContext context, Widget destinationPage) {
   Navigator.push(
