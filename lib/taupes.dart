@@ -81,7 +81,7 @@ class _MoleGameState extends State<MoleGame> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const ChallengeScreen()),
+                            builder: (context) => MyHomePage(pseudo: nom_user, nbVictoires: nb_victoires, tempsTaupe: temps_taupe)),
                       );
                     },
                   ),

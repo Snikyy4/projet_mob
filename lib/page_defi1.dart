@@ -13,10 +13,10 @@ class FlagsScreen extends StatefulWidget {
 
 class _FlagsScreenState extends State<FlagsScreen> {
   final List<Flag> _flags = [
-    Flag(name: 'France', image: 'lib/assets/france.png'),
-    Flag(name: 'Allemagne', image: 'lib/assets/allemagne.png'),
-    Flag(name: 'Italie', image: 'lib/assets/italie.png'),
-    Flag(name: 'Espagne', image: 'lib/assets/espagne.png'),
+    Flag(name: 'France', image: 'lib/assets/pays/france.png'),
+    Flag(name: 'Allemagne', image: 'lib/assets/pays/allemagne.png'),
+    Flag(name: 'Italie', image: 'lib/assets/pays/italie.png'),
+    Flag(name: 'Espagne', image: 'lib/assets/pays/espagne.png'),
   ];
   Flag? _currentFlag;
   String _inputValue = '';
@@ -45,7 +45,7 @@ class _FlagsScreenState extends State<FlagsScreen> {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    navigateTo(context, const ChallengeScreen());
+                    navigateTo(context, MyHomePage(pseudo: nom_user, nbVictoires: nb_victoires, tempsTaupe: temps_taupe));
                   },
                   child: const Text('OK'),
                 ),
