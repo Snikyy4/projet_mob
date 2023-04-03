@@ -20,7 +20,6 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     super.initState();
     _initDatabase();
-    
   }
 
   Future<void> _initDatabase() async {
@@ -52,31 +51,30 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<int> getVictoriesByUsername(String username) async {
-      final db = await _database;
-      final result = await db.rawQuery(
-        'SELECT nbVictoires FROM Users WHERE username = ?',
-        [username],
-      );
-      if (result.isNotEmpty) {
-        return result.first['nbVictoires'] as int;
-      } else {
-        return 0;
-      }
+    final db = await _database;
+    final result = await db.rawQuery(
+      'SELECT nbVictoires FROM Users WHERE username = ?',
+      [username],
+    );
+    if (result.isNotEmpty) {
+      return result.first['nbVictoires'] as int;
+    } else {
+      return 0;
     }
+  }
 
-    Future<double> getTempsTaupeByUsername(String username) async {
-      final db = await _database;
-      final result = await db.rawQuery(
-        'SELECT tempsTaupe FROM Users WHERE username = ?',
-        [username],
-      );
-      if (result.isNotEmpty) {
-        return result.first['tempsTaupe'] as double;
-      } else {
-        return 0;
-      }
+  Future<double> getTempsTaupeByUsername(String username) async {
+    final db = await _database;
+    final result = await db.rawQuery(
+      'SELECT tempsTaupe FROM Users WHERE username = ?',
+      [username],
+    );
+    if (result.isNotEmpty) {
+      return result.first['tempsTaupe'] as double;
+    } else {
+      return 0;
     }
-
+  }
 
   Future<void> _saveUser(
       String username, String password, int nbVictoires, int tempsTaupe) async {
@@ -96,70 +94,79 @@ class _LoginPageState extends State<LoginPage> {
 
       final user = await _getUserByUsername(username);
       if (user.isEmpty) {
-  await _saveUser(username, password, 0, -1);
+        await _saveUser(username, password, 0, -1);
 
-  showDialog(
-    context: this.context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Inscription'),
-        content: const Text('Inscription réussie'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              navigateTo(context, MyHomePage(pseudo: username, nbVictoires: 0, tempsTaupe: -1,));
-            },
-          ),
-        ],
-      );
-    },
-  );
-} else if (user['password'] == password) {
-  showDialog(
-    context: this.context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Connexion'),
-        content: const Text('Connexion réussie'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () async {
-              Navigator.of(context).pop();
-              final nbVictoires = await getVictoriesByUsername(username);
-              final tempsTaupe = await getTempsTaupeByUsername(username);
-              navigateTo(context, MyHomePage(pseudo: username, nbVictoires: nbVictoires, tempsTaupe: tempsTaupe));
-            },
-          ),
-        ],
-      );
-    },
-  );
-} else {
-  showDialog(
-    context: this.context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Connexion'),
-        content:
-            const Text('Mot de passe incorrect ou username déjà utilisé'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+        showDialog(
+          context: this.context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Inscription'),
+              content: const Text('Inscription réussie'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    navigateTo(
+                        context,
+                        MyHomePage(
+                          pseudo: username,
+                          nbVictoires: 0,
+                          tempsTaupe: -1,
+                        ));
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else if (user['password'] == password) {
+        showDialog(
+          context: this.context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Connexion'),
+              content: const Text('Connexion réussie'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () async {
+                    Navigator.of(context).pop();
+                    final nbVictoires = await getVictoriesByUsername(username);
+                    final tempsTaupe = await getTempsTaupeByUsername(username);
+                    navigateTo(
+                        context,
+                        MyHomePage(
+                            pseudo: username,
+                            nbVictoires: nbVictoires,
+                            tempsTaupe: tempsTaupe));
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } else {
+        showDialog(
+          context: this.context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Connexion'),
+              content:
+                  const Text('Mot de passe incorrect ou username déjà utilisé'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
-
-    
   }
 
   @override
@@ -171,53 +178,61 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    body: Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage('lib/assets/fond_ecran_bdd.png'),
-          fit: BoxFit.cover,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('lib/assets/fond_ecran_bdd.png'),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextFormField(
-                controller: _usernameController,
-                decoration: const InputDecoration(
-                  labelText: "Nom d'utilisateur",
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                TextFormField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    labelText: "Nom d'utilisateur",
+                  ),
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) return 'Username';
+                    return null;
+                  },
+                  style: const TextStyle(
+                      color: Colors.white), // ajouter cette ligne
                 ),
-                validator: (value) {
-                  if (value?.isEmpty ?? true) return 'Username';
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Mot de passe',
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Mot de passe',
+                  ),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value?.isEmpty ?? true) return 'Mot de passe';
+                    return null;
+                  },
+                  style: const TextStyle(
+                      color: Colors.white), // ajouter cette ligne
                 ),
-                obscureText: true,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) return 'Mot de passe';
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16.0),
-              ElevatedButton(
-                onPressed: _onSubmit,
-                child: const Text('Se connecter'),
-              ),
-            ],
+                const SizedBox(height: 16.0),
+                ElevatedButton(
+                  onPressed: _onSubmit,
+                  style: ElevatedButton.styleFrom(
+                    // ajouter cette ligne
+                    foregroundColor: Colors.black, backgroundColor: Colors.white, // mettre la couleur du texte à noir
+                  ),
+                  child: const Text('Se connecter'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
