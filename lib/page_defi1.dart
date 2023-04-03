@@ -5,7 +5,7 @@ import 'package:projet_mob/main.dart';
 import 'challenge_screen.dart';
 
 class FlagsScreen extends StatefulWidget {
-  const FlagsScreen({super.key});
+  const FlagsScreen({Key? key}) : super(key: key);
 
   @override
   _FlagsScreenState createState() => _FlagsScreenState();
@@ -17,15 +17,39 @@ class _FlagsScreenState extends State<FlagsScreen> {
     Flag(name: 'Allemagne', image: 'lib/assets/pays/allemagne.png'),
     Flag(name: 'Italie', image: 'lib/assets/pays/italie.png'),
     Flag(name: 'Espagne', image: 'lib/assets/pays/espagne.png'),
+    Flag(name: 'Royaume unis', image: 'lib/assets/pays/angleterre.png'),
+    Flag(name: 'Argentine', image: 'lib/assets/pays/argentine.png'),
+    Flag(name: 'Australie', image: 'lib/assets/pays/australie.png'),
+   
+    // Ajouter d'autres pays ici si nécessaire
   ];
+
+  final int _numFlags = 5; // Nombre de drapeaux à deviner
+
   Flag? _currentFlag;
   String _inputValue = '';
   Set<Flag> _usedFlags = {};
 
+  List<Flag> _selectFlags() {
+    // Sélectionne _numFlags drapeaux aléatoirement parmi _flags
+    List<Flag> selectedFlags = [];
+    List<Flag> unusedFlags = List.from(_flags);
+    Random random = Random();
+
+    for (int i = 0; i < _numFlags; i++) {
+      int index = random.nextInt(unusedFlags.length);
+      selectedFlags.add(unusedFlags.removeAt(index));
+    }
+
+    return selectedFlags;
+  }
+
   @override
   void initState() {
     super.initState();
-    _currentFlag = _flags[0];
+    List<Flag> selectedFlags = _selectFlags();
+    _currentFlag = selectedFlags[0];
+    _flags.retainWhere((flag) => selectedFlags.contains(flag));
   }
 
   void _onGuess(String guess) {
@@ -33,7 +57,7 @@ class _FlagsScreenState extends State<FlagsScreen> {
     final oldFlagName = _currentFlag!.name;
     _usedFlags.add(_currentFlag!);
     setState(() {
-      if (_usedFlags.length == _flags.length) {
+      if (_usedFlags.length == _numFlags) {
         _usedFlags.clear();
         showDialog(
           context: context,
@@ -67,10 +91,11 @@ class _FlagsScreenState extends State<FlagsScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Bravo!'),
-          content: Text('Vous avez deviné le drapeau $oldFlagName'),
+          content: Text('Vous avez deviné le drapeau $oldFlagName.'),
           actions: [
             TextButton(
-              onPressed: () {
+              onPressed:
+ () {
                 Navigator.pop(context);
               },
               child: const Text('Continuer'),
@@ -80,34 +105,57 @@ class _FlagsScreenState extends State<FlagsScreen> {
       },
     );
   } else {
-     _usedFlags.add(_currentFlag!);
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Incorrect'),
-          content: const Text('La réponse est incorrecte.'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                setState(() {
-                  int randomIndex;
-                  do {
-                    randomIndex = Random().nextInt(_flags.length);
-                  } while (_usedFlags.contains(_flags[randomIndex]));
-                  _currentFlag = _flags[randomIndex];
-                  _inputValue = '';
-                });
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+    _usedFlags.add(_currentFlag!);
+    if (_usedFlags.length == _numFlags) {
+      _usedFlags.clear();
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Fin du jeu!'),
+            content: const Text('Vous avez terminé le jeu!'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  navigateTo(context, MyHomePage(pseudo: nom_user, nbVictoires: nb_victoires, tempsTaupe: temps_taupe));
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Incorrect'),
+            content: const Text('La réponse est incorrecte.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  setState(() {
+                    int randomIndex;
+                    do {
+                      randomIndex = Random().nextInt(_flags.length);
+                    } while (_usedFlags.contains(_flags[randomIndex]));
+                    _currentFlag = _flags[randomIndex];
+                    _inputValue = '';
+                  });
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 }
+
 
   @override
   Widget build(BuildContext context) {
