@@ -198,18 +198,23 @@ class _LoginPageState extends State<LoginPage> {
                   controller: _usernameController,
                   decoration: const InputDecoration(
                     labelText: "Nom d'utilisateur",
+                    labelStyle:
+                        TextStyle(color: Colors.black), // ajouter cette ligne
                   ),
                   validator: (value) {
                     if (value?.isEmpty ?? true) return 'Username';
                     return null;
                   },
                   style: const TextStyle(
-                      color: Colors.white), // ajouter cette ligne
+                      color: Colors.black), // ajouter cette ligne
+                  cursorColor: Colors.black, // ajouter cette ligne
                 ),
                 TextFormField(
                   controller: _passwordController,
                   decoration: const InputDecoration(
                     labelText: 'Mot de passe',
+                    labelStyle:
+                        TextStyle(color: Colors.black), // ajouter cette ligne
                   ),
                   obscureText: true,
                   validator: (value) {
@@ -217,14 +222,14 @@ class _LoginPageState extends State<LoginPage> {
                     return null;
                   },
                   style: const TextStyle(
-                      color: Colors.white), // ajouter cette ligne
+                      color: Colors.black), // ajouter cette ligne
+                  cursorColor: Colors.black, // ajouter cette ligne
                 ),
                 const SizedBox(height: 16.0),
                 ElevatedButton(
                   onPressed: _onSubmit,
                   style: ElevatedButton.styleFrom(
-                    // ajouter cette ligne
-                    foregroundColor: Colors.black, backgroundColor: Colors.white, // mettre la couleur du texte à noir
+                    foregroundColor: Colors.black, backgroundColor: Colors.white, // ajouter cette ligne
                   ),
                   child: const Text('Se connecter'),
                 ),
