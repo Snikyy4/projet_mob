@@ -174,7 +174,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Page'),
+        title: const Text('Page de connexion'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -185,7 +185,7 @@ class _LoginPageState extends State<LoginPage> {
               TextFormField(
                 controller: _usernameController,
                 decoration: const InputDecoration(
-                  labelText: 'Username',
+                  labelText: "Nom d'utilisateur",
                 ),
                 validator: (value) {
                   if (value?.isEmpty ?? true) return 'Username';
@@ -206,7 +206,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _onSubmit,
-                child: const Text('Submit'),
+                child: const Text('Se connecter'),
               ),
             ],
           ),
