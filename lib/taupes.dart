@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_const, prefer_final_fields
+
 import 'dart:async';
 import 'dart:math';
 import 'package:projet_mob/challenge_screen.dart';
@@ -73,7 +75,7 @@ class _MoleGameState extends State<MoleGame> {
               return AlertDialog(
                 title: const Text('FIN'),
                 content: Text(
-                    'Fin du jeu des taupes ! Vous avez tapé 5 taupes en $total secondes'),
+                    'Fin du jeu ! Vous avez tué 5 aliens en $total secondes'),
                 actions: <Widget>[
                   TextButton(
                     child: const Text('OK'),
@@ -81,7 +83,10 @@ class _MoleGameState extends State<MoleGame> {
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => MyHomePage(pseudo: nom_user, nbVictoires: nb_victoires, tempsTaupe: temps_taupe)),
+                            builder: (context) => MyHomePage(
+                                pseudo: nom_user,
+                                nbVictoires: nb_victoires,
+                                tempsTaupe: temps_taupe)),
                       );
                     },
                   ),
@@ -105,10 +110,12 @@ class _MoleGameState extends State<MoleGame> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Score: $_score',
+              "Nombre d'aliens tués : $_score",
               textAlign: TextAlign.center,
               style: const TextStyle(
+                color: Colors.blue,
                 fontSize: 24.0,
+                fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 20.0),
@@ -122,8 +129,15 @@ class _MoleGameState extends State<MoleGame> {
                   onTap: () => _onTap(index),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: _moles[index] ? Colors.brown : Colors.green,
                       borderRadius: BorderRadius.circular(10.0),
+                      image: DecorationImage(
+                        image: AssetImage(
+                          _moles[index]
+                              ? 'lib/assets/alien.png'
+                              : 'lib/assets/planete.png',
+                        ),
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 );

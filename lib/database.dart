@@ -181,61 +181,99 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage('lib/assets/fond_ecran_bdd.png'),
             fit: BoxFit.cover,
           ),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                TextFormField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: "Nom d'utilisateur",
-                    labelStyle:
-                        TextStyle(color: Colors.black), // ajouter cette ligne
-                  ),
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'Username';
-                    return null;
-                  },
-                  style: const TextStyle(
-                      color: Colors.black), // ajouter cette ligne
-                  cursorColor: Colors.black, // ajouter cette ligne
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              margin: const EdgeInsets.only(bottom: 150.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                border: Border.all(color: Colors.white),
+              ),
+              child: const Text(
+                "Bienvenue sur RocketLiche",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
                 ),
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(
-                    labelText: 'Mot de passe',
-                    labelStyle:
-                        TextStyle(color: Colors.black), // ajouter cette ligne
-                  ),
-                  obscureText: true,
-                  validator: (value) {
-                    if (value?.isEmpty ?? true) return 'Mot de passe';
-                    return null;
-                  },
-                  style: const TextStyle(
-                      color: Colors.black), // ajouter cette ligne
-                  cursorColor: Colors.black, // ajouter cette ligne
-                ),
-                const SizedBox(height: 16.0),
-                ElevatedButton(
-                  onPressed: _onSubmit,
-                  style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black, backgroundColor: Colors.white, // ajouter cette ligne
-                  ),
-                  child: const Text('Se connecter'),
-                ),
-              ],
+              ),
             ),
-          ),
+            const Text(
+              "Veuillez vous connecter à votre compte",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18.0,
+                fontStyle: FontStyle.italic
+              ),
+            ),
+            const SizedBox(height: 10.0),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _usernameController,
+                      decoration: const InputDecoration(
+                        labelText: "Nom d'utilisateur",
+                        labelStyle: TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) return 'Username';
+                        return null;
+                      },
+                      style: const TextStyle(color: Colors.white),
+                      cursorColor: Colors.white,
+                    ),
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: const InputDecoration(
+                        labelText: 'Mot de passe',
+                        labelStyle: TextStyle(color: Colors.white),
+                        enabledBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                        focusedBorder: UnderlineInputBorder(
+                          borderSide: BorderSide(color: Colors.white),
+                        ),
+                      ),
+                      obscureText: true,
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) return 'Mot de passe';
+                        return null;
+                      },
+                      style: const TextStyle(color: Colors.white),
+                      cursorColor: Colors.white,
+                    ),
+                    const SizedBox(height: 16.0),
+                    ElevatedButton(
+                      onPressed: _onSubmit,
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.black,
+                        backgroundColor: Colors.white,
+                      ),
+                      child: const Text('Se connecter'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
