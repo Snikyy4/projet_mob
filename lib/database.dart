@@ -33,7 +33,8 @@ class _LoginPageState extends State<LoginPage> {
           username TEXT UNIQUE,
           password TEXT,
           nbVictoires INTEGER,
-          tempsTaupe REAL
+          tempsTaupe REAL,
+          scoreAlienRun INTEGER
         )
       ''');
     });
@@ -76,13 +77,27 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<int> getScoreAlienRunByUsername(String username) async {
+    final db = await _database;
+    final result = await db.rawQuery(
+      'SELECT scoreAlienRun FROM Users WHERE username = ?',
+      [username],
+    );
+    if (result.isNotEmpty) {
+      return result.first['scoreAlienRun'] as int;
+    } else {
+      return 0;
+    }
+  }
+
   Future<void> _saveUser(
-      String username, String password, int nbVictoires, int tempsTaupe) async {
+      String username, String password, int nbVictoires, int tempsTaupe, int scoreAlienRun) async {
     final user = {
       'username': username,
       'password': password,
       'nbVictoires': nbVictoires,
-      'tempsTaupe': tempsTaupe
+      'tempsTaupe': tempsTaupe,
+      'scoreAlienRun' : scoreAlienRun
     };
     await _database.insert('Users', user);
   }
@@ -94,7 +109,7 @@ class _LoginPageState extends State<LoginPage> {
 
       final user = await _getUserByUsername(username);
       if (user.isEmpty) {
-        await _saveUser(username, password, 0, -1);
+        await _saveUser(username, password, 0, -1, -1);
 
         showDialog(
           context: this.context,
@@ -113,6 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                           pseudo: username,
                           nbVictoires: 0,
                           tempsTaupe: -1,
+                          scoreAlien: -1,
                         ));
                   },
                 ),
@@ -134,12 +150,14 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.of(context).pop();
                     final nbVictoires = await getVictoriesByUsername(username);
                     final tempsTaupe = await getTempsTaupeByUsername(username);
+                    final scoreAlienRun = await getScoreAlienRunByUsername(username);
                     navigateTo(
                         context,
                         MyHomePage(
                             pseudo: username,
                             nbVictoires: nbVictoires,
-                            tempsTaupe: tempsTaupe));
+                            tempsTaupe: tempsTaupe,
+                            scoreAlien : scoreAlienRun));
                   },
                 ),
               ],

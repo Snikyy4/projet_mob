@@ -86,7 +86,8 @@ class _MoleGameState extends State<MoleGame> {
                             builder: (context) => MyHomePage(
                                 pseudo: nom_user,
                                 nbVictoires: nb_victoires,
-                                tempsTaupe: temps_taupe)),
+                                tempsTaupe: temps_taupe,
+                                scoreAlien: scoreAlienRun,)),
                       );
                     },
                   ),

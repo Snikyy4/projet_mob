@@ -5,6 +5,7 @@ import 'database.dart';
 String nom_user = '';
 int nb_victoires = 0;
 double temps_taupe = -1;
+int scoreAlienRun = -1;
 
 void main() {
   runApp(const MyApp());
@@ -26,12 +27,13 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.pseudo, required this.nbVictoires, required this.tempsTaupe})
+  const MyHomePage({Key? key, required this.pseudo, required this.nbVictoires, required this.tempsTaupe, required this.scoreAlien})
       : super(key: key);
 
   final String pseudo;
   final int nbVictoires;
   final double tempsTaupe;
+  final int scoreAlien;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
