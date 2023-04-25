@@ -20,6 +20,36 @@ class _FlagsScreenState extends State<FlagsScreen> {
     Flag(name: 'Royaume unis', image: 'lib/assets/pays/angleterre.png'),
     Flag(name: 'Argentine', image: 'lib/assets/pays/argentine.png'),
     Flag(name: 'Australie', image: 'lib/assets/pays/australie.png'),
+    Flag(name: 'autriche', image: 'lib/assets/pays/autriche.png'),
+    Flag(name: 'belgique', image: 'lib/assets/pays/belgique.png'),
+    Flag(name: 'bolivie', image: 'lib/assets/pays/bolivie.png'),
+    Flag(name: 'bresil', image: 'lib/assets/pays/bresil.png'),
+    Flag(name: 'chili', image: 'lib/assets/pays/chili.png'),
+    Flag(name: 'chine', image: 'lib/assets/pays/chine.png'),
+    Flag(name: 'colombie', image: 'lib/assets/pays/colombie.png'),
+    Flag(name: 'costa rica', image: 'lib/assets/pays/costa_rica.png'),
+    Flag(name: 'croatie', image: 'lib/assets/pays/croatie.png'),
+    Flag(name: 'finlande', image: 'lib/assets/pays/finlande.png'),
+    Flag(name: 'hongrie', image: 'lib/assets/pays/hongrie.png'),
+    Flag(name: 'inde', image: 'lib/assets/pays/inde.png'),
+    Flag(name: 'irlande', image: 'lib/assets/pays/irlande.png'),
+    Flag(name: 'kazakhstan', image: 'lib/assets/pays/kazakhstan.png'),
+    Flag(name: 'luxembourg', image: 'lib/assets/pays/luxembourg.png'),
+    Flag(name: 'mexique', image: 'lib/assets/pays/mexique.png'),
+    Flag(name: 'norvege', image: 'lib/assets/pays/norvege.png'),
+    Flag(name: 'pays bas', image: 'lib/assets/pays/pays_bas.png'),
+     Flag(name: 'perou', image: 'lib/assets/pays/perou.png'),
+    Flag(name: 'pologne', image: 'lib/assets/pays/pologne.png'),
+    Flag(name: 'portugal', image: 'lib/assets/pays/portugal.png'),
+    Flag(name: 'roumanie', image: 'lib/assets/pays/roumanie.png'),
+    Flag(name: 'russie', image: 'lib/assets/pays/russie.png'),
+    Flag(name: 'suede', image: 'lib/assets/pays/suede.png'),
+    
+    Flag(name: 'tunisie', image: 'lib/assets/pays/tunisie.png'),
+    Flag(name: 'turquie', image: 'lib/assets/pays/turquie.png'),
+    Flag(name: 'ukraine', image: 'lib/assets/pays/ukraine.png'),
+    Flag(name: 'uruguay', image: 'lib/assets/pays/uruguay.png'),
+    Flag(name: 'venezuela', image: 'lib/assets/pays/venezuela.png'),
    
     // Ajouter d'autres pays ici si nécessaire
   ];
@@ -52,10 +82,13 @@ class _FlagsScreenState extends State<FlagsScreen> {
     _flags.retainWhere((flag) => selectedFlags.contains(flag));
   }
 
-  void _onGuess(String guess) {
+ int _numCorrectAnswers = 0; // Nombre de réponses correctes
+
+void _onGuess(String guess) {
   if (_currentFlag != null && guess.toLowerCase() == _currentFlag!.name.toLowerCase()) {
     final oldFlagName = _currentFlag!.name;
     _usedFlags.add(_currentFlag!);
+    _numCorrectAnswers++; // Incrémenter le nombre de réponses correctes
     setState(() {
       if (_usedFlags.length == _numFlags) {
         _usedFlags.clear();
@@ -64,7 +97,7 @@ class _FlagsScreenState extends State<FlagsScreen> {
           builder: (BuildContext context) {
             return AlertDialog(
               title: const Text('Fin du jeu!'),
-              content: const Text('Vous avez terminé le jeu!'),
+              content: Text('Vous avez terminé le jeu avec $_numCorrectAnswers réponses correctes sur $_numFlags.'),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -94,8 +127,7 @@ class _FlagsScreenState extends State<FlagsScreen> {
           content: Text('Vous avez deviné le drapeau $oldFlagName.'),
           actions: [
             TextButton(
-              onPressed:
- () {
+              onPressed: () {
                 Navigator.pop(context);
               },
               child: const Text('Continuer'),
@@ -106,6 +138,23 @@ class _FlagsScreenState extends State<FlagsScreen> {
     );
   } else {
     _usedFlags.add(_currentFlag!);
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('BOUHHH!'),
+          content: Text('Vous vous êtes trompés .'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Continuer'),
+            ),
+          ],
+        );
+      },
+    );
     if (_usedFlags.length == _numFlags) {
       _usedFlags.clear();
       showDialog(
@@ -113,7 +162,7 @@ class _FlagsScreenState extends State<FlagsScreen> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text('Fin du jeu!'),
-            content: const Text('Vous avez terminé le jeu!'),
+            content: Text('Vous avez terminé le jeu avec $_numCorrectAnswers réponses correctes sur $_numFlags.'),
             actions: [
               TextButton(
                 onPressed: () {
@@ -127,69 +176,66 @@ class _FlagsScreenState extends State<FlagsScreen> {
         },
       );
     } else {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Incorrect'),
-            content: const Text('La réponse est incorrecte.'),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    int randomIndex;
-                    do {
-                      randomIndex = Random().nextInt(_flags.length);
-                    } while (_usedFlags.contains(_flags[randomIndex]));
-                    _currentFlag = _flags[randomIndex];
-                    _inputValue = '';
-                  });
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          );
-        },
-      );
+      setState(() {
+        int randomIndex;
+        do {
+          randomIndex = Random().nextInt(_flags.length);
+        } while (_usedFlags.contains(_flags[randomIndex]));
+        _currentFlag = _flags[randomIndex];
+        _inputValue = '';
+      });
     }
   }
 }
 
+void _validateGuess() {
+  if (_inputValue.isNotEmpty) {
+    _onGuess(_inputValue);
+  }
+}
+
+
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Jeu des drapeaux'),
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              _currentFlag!.image,
-              width: 150,
-              height: 150,
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Jeu des drapeaux'),
+    ),
+    body: Container(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            _currentFlag!.image,
+            width: 150,
+            height: 150,
+          ),
+          const SizedBox(height: 20),
+          TextField(
+            onChanged: (value) {
+              _inputValue = value;
+            },
+            onSubmitted: _onGuess,
+            decoration: const InputDecoration(
+              hintText: 'Entrez le nom du pays',
             ),
-            const SizedBox(height: 20),
-            TextField(
-              onChanged: (value) {
-                _inputValue = value;
-              },
-              onSubmitted: _onGuess,
-              decoration: const InputDecoration(
-                hintText: 'Entrez le nom du pays',
-              ),
-              controller: TextEditingController(text: _inputValue), // utiliser un controller pour afficher la valeur actuelle de _inputValue dans le champ de texte
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
+            controller: TextEditingController(text: _inputValue),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            onPressed: () {
+              _onGuess(_inputValue);
+            },
+            child: const Text('Valider'),
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 }
 
 class Flag {
