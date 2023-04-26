@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'page_defi1.dart'; //import du fichier pour le défi 1
 import 'main.dart';
 import 'taupes.dart';
+import 'quinapas.dart';
 
 class ChallengeScreen extends StatelessWidget {
   const ChallengeScreen({Key? key});
@@ -33,7 +34,7 @@ Widget build(BuildContext context) {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () => navigateTo(context, const LequelNAPas()),
               child: const Text("Lequel n'a pas", style: TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
