@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'main.dart';
 
 class LequelNAPas extends StatefulWidget {
   const LequelNAPas({Key? key}) : super(key: key);
@@ -180,12 +181,19 @@ class _LequelNAPasState extends State<LequelNAPas> {
                 'Vous avez obtenu $_numCorrectAnswers bonnes réponses sur $_numQuestions.'),
             actions: [
               TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  _resetGame();
-                },
-                child: const Text('Nouvelle partie'),
-              ),
+                    child: const Text('OK'),
+                    onPressed: () async {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => MyHomePage(
+                                pseudo: nom_user,
+                                nbVictoires: nb_victoires,
+                                tempsTaupe: temps_taupe,
+                                scoreAlien: scoreAlienRun,)),
+                      );
+                    },
+                  ),
             ],
           );
         },
@@ -202,15 +210,7 @@ class _LequelNAPasState extends State<LequelNAPas> {
       });
     }
   }
-
-  void _resetGame() {
-    setState(() {
-      _usedQuestions.clear();
-      _numCorrectAnswers = 0;
-      _generateQuestion();
-    });
-  }
-
+  
   void _checkAnswer(int index) {
     bool isCorrect = index == _reponseIndex;
     if (isCorrect) {
