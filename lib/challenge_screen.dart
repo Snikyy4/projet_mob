@@ -5,6 +5,7 @@ import 'page_defi1.dart'; //import du fichier pour le défi 1
 import 'main.dart';
 import 'taupes.dart';
 import 'quinapas.dart';
+import 'alien_run.dart';
 
 class ChallengeScreen extends StatelessWidget {
   const ChallengeScreen({Key? key});
@@ -49,7 +50,7 @@ Widget build(BuildContext context) {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () => navigateTo(context, AlienRun()),
               child: const Text('Alien Run | Record : 0 points', style: TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
