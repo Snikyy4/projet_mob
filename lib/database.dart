@@ -151,6 +151,7 @@ class _LoginPageState extends State<LoginPage> {
                     final nbVictoires = await getVictoriesByUsername(username);
                     final tempsTaupe = await getTempsTaupeByUsername(username);
                     final scoreAlienRun = await getScoreAlienRunByUsername(username);
+                    // ignore: use_build_context_synchronously
                     navigateTo(
                         context,
                         MyHomePage(
