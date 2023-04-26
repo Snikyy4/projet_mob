@@ -9,6 +9,8 @@ import 'main.dart';
 import 'package:flutter/material.dart';
 
 class MoleGame extends StatefulWidget {
+  const MoleGame({super.key});
+
   @override
   _MoleGameState createState() => _MoleGameState();
 }

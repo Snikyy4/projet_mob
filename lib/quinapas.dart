@@ -210,7 +210,7 @@ class _LequelNAPasState extends State<LequelNAPas> {
       });
     }
   }
-  
+
   void _checkAnswer(int index) {
     bool isCorrect = index == _reponseIndex;
     if (isCorrect) {
