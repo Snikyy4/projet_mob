@@ -49,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage> {
     nom_user = widget.pseudo;
     nb_victoires = widget.nbVictoires;
     temps_taupe = widget.tempsTaupe;
-
+    scoreAlienRun = widget.scoreAlien;
 
   }
 

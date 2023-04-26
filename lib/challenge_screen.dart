@@ -51,7 +51,7 @@ Widget build(BuildContext context) {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => navigateTo(context, AlienRun()),
-              child: const Text('Alien Run | Record : 0 points', style: TextStyle(color: Colors.white)),
+              child: Text("Alien Run | Record : $scoreAlienRun points", style: const TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
             ElevatedButton(

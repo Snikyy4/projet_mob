@@ -23,7 +23,7 @@ class _AlienRunState extends State<AlienRun> {
   @override
   void initState() {
     super.initState();
-    _timer = Timer.periodic(Duration(milliseconds: 10), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 10), (timer) {
       setState(() {
         _wallY += 1.0;
         if (_wallY >= MediaQuery.of(context).size.height) {
