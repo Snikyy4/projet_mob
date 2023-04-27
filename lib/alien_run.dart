@@ -14,7 +14,7 @@ class AlienRun extends StatefulWidget {
 class _AlienRunState extends State<AlienRun> {
   double _playerX = 0.0;
   double _playerY = 0.0;
-  late Timer _timer; 
+  late Timer _timer;
   double _wallY = 0.0;
   double _holeX = 0.0;
   int _score = 0;
@@ -34,7 +34,11 @@ class _AlienRunState extends State<AlienRun> {
             _playerX >= _holeX - 50.0 &&
             _playerX <= _holeX + 50.0) {
           _score++;
-        } else { //fin du jeu
+        }
+        if (_playerY >= _wallY - 50.0 &&
+            _playerX >= _holeX - 50.0 &&
+            _playerX <= _holeX + 50.0) {
+          _timer.cancel();
           scoreAlienRun = _score;
           updateScore(scoreAlienRun);
           showDialog(
@@ -42,8 +46,8 @@ class _AlienRunState extends State<AlienRun> {
             builder: (BuildContext context) {
               return AlertDialog(
                 title: const Text('FIN'),
-                content: Text(
-                    'Fin du jeu ! Vous avez obtenu un score de $_score'),
+                content:
+                    Text('Fin du jeu ! Vous avez obtenu un score de $_score'),
                 actions: <Widget>[
                   TextButton(
                     child: const Text('OK'),
@@ -52,10 +56,11 @@ class _AlienRunState extends State<AlienRun> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => MyHomePage(
-                                pseudo: nom_user,
-                                nbVictoires: nb_victoires,
-                                tempsTaupe: temps_taupe,
-                                scoreAlien:  scoreAlienRun,)),
+                                  pseudo: nom_user,
+                                  nbVictoires: nb_victoires,
+                                  tempsTaupe: temps_taupe,
+                                  scoreAlien: scoreAlienRun,
+                                )),
                       );
                     },
                   ),
@@ -85,12 +90,12 @@ class _AlienRunState extends State<AlienRun> {
             Positioned(
               left: _playerX,
               top: _playerY,
-              child: Image.asset('assets/vaisseau.png'),
+              child: Image.asset('lib/assets/vaisseau.png'),
             ),
             Positioned(
               left: _holeX,
               top: _wallY,
-              child: Image.asset('assets/trou_noir.png'),
+              child: Image.asset('lib/assets/trou_noir.png'),
             ),
           ],
         ),
