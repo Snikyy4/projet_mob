@@ -6,6 +6,7 @@ import 'main.dart';
 import 'taupes.dart';
 import 'quinapas.dart';
 import 'alien_run.dart';
+import 'labyrinthe.dart';
 
 class ChallengeScreen extends StatelessWidget {
   const ChallengeScreen({Key? key});
@@ -55,7 +56,7 @@ Widget build(BuildContext context) {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+             onPressed: () => navigateTo(context, MazeGame()),
               child: const Text('Labyrinthe | Record : -1 secondes', style: TextStyle(color: Colors.white)),
             ),
           ],
