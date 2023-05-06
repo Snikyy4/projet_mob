@@ -7,6 +7,7 @@ import 'taupes.dart';
 import 'quinapas.dart';
 import 'alien_run.dart';
 import 'labyrinthe.dart';
+import 'boussole.dart';
 
 class ChallengeScreen extends StatelessWidget {
   const ChallengeScreen({Key? key});
@@ -41,12 +42,12 @@ Widget build(BuildContext context) {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => navigateTo(context, MoleGame()),
+              onPressed: () => navigateTo(context, const MoleGame()),
               child: Text("Tape l'alien ! | Record : $temps_taupe secondes", style: const TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () => navigateTo(context, const Boussole()),
               child: const Text('Jeu de la boussole | Record : -1 secondes', style: TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
