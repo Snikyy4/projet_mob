@@ -81,8 +81,9 @@ class _BoussoleState extends State<Boussole> {
   }
 
   @override
-  Widget build(BuildContext context) {
+ Widget build(BuildContext context) {
   return Scaffold(
+    backgroundColor: Colors.transparent,
     body: Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -90,33 +91,39 @@ class _BoussoleState extends State<Boussole> {
           fit: BoxFit.cover,
         ),
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Pointez vers: ${_randomDirection.toStringAsFixed(2)}°',
-              style: const TextStyle(fontSize: 24, color: Colors.white),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Direction actuelle: ${_direction.toStringAsFixed(2)}°',
-              style: const TextStyle(fontSize: 24, color: Colors.white),
-            ),
-            const SizedBox(height: 20),
-            Transform.rotate(
-              angle: (_direction - _randomDirection) * pi / 180,
-              child: Image.asset(
-                'lib/assets/vaisseau.png',
-                width: 100,
-                height: 100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(height: 50),
+          Text(
+            'Pointez vers: ${_randomDirection.toStringAsFixed(2)}°',
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Direction actuelle: ${_direction.toStringAsFixed(2)}°',
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: Align(
+              alignment: Alignment.center,
+              child: Transform.rotate(
+                angle: (_direction - _randomDirection) * pi / 180,
+                child: Image.asset(
+                  'lib/assets/vaisseau.png',
+                  width: 100,
+                  height: 100,
+                ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );
 }
+
+
 
 }
