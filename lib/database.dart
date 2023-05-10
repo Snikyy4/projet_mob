@@ -34,7 +34,8 @@ class _LoginPageState extends State<LoginPage> {
           password TEXT,
           nbVictoires INTEGER,
           tempsTaupe REAL,
-          scoreAlienRun INTEGER
+          scoreAlienRun INTEGER,
+          tempsBoussole REAL
         )
       ''');
     });
@@ -90,14 +91,28 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  Future<void> _saveUser(
-      String username, String password, int nbVictoires, int tempsTaupe, int scoreAlienRun) async {
+  Future<double> getTempsBoussoleByUsername(String username) async {
+    final db = await _database;
+    final result = await db.rawQuery(
+      'SELECT tempsBoussole FROM Users WHERE username = ?',
+      [username],
+    );
+    if (result.isNotEmpty) {
+      return result.first['tempsBoussole'] as double;
+    } else {
+      return 0;
+    }
+  }
+
+  Future<void> _saveUser(String username, String password, int nbVictoires,
+      double tempsTaupe, int scoreAlienRun, double tempsBoussole) async {
     final user = {
       'username': username,
       'password': password,
       'nbVictoires': nbVictoires,
       'tempsTaupe': tempsTaupe,
-      'scoreAlienRun' : scoreAlienRun
+      'scoreAlienRun': scoreAlienRun,
+      'tempsBoussole': tempsBoussole
     };
     await _database.insert('Users', user);
   }
@@ -109,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
 
       final user = await _getUserByUsername(username);
       if (user.isEmpty) {
-        await _saveUser(username, password, 0, -1, -1);
+        await _saveUser(username, password, 0, -1, -1, -1);
 
         showDialog(
           context: this.context,
@@ -125,11 +140,11 @@ class _LoginPageState extends State<LoginPage> {
                     navigateTo(
                         context,
                         MyHomePage(
-                          pseudo: username,
-                          nbVictoires: 0,
-                          tempsTaupe: -1,
-                          scoreAlien: -1,
-                        ));
+                            pseudo: username,
+                            nbVictoires: 0,
+                            tempsTaupe: -1,
+                            scoreAlien: -1,
+                            tempsBoussole: -1));
                   },
                 ),
               ],
@@ -150,7 +165,10 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.of(context).pop();
                     final nbVictoires = await getVictoriesByUsername(username);
                     final tempsTaupe = await getTempsTaupeByUsername(username);
-                    final scoreAlienRun = await getScoreAlienRunByUsername(username);
+                    final scoreAlienRun =
+                        await getScoreAlienRunByUsername(username);
+                    final tempsBoussole =
+                        await getTempsBoussoleByUsername(username);
                     // ignore: use_build_context_synchronously
                     navigateTo(
                         context,
@@ -158,7 +176,8 @@ class _LoginPageState extends State<LoginPage> {
                             pseudo: username,
                             nbVictoires: nbVictoires,
                             tempsTaupe: tempsTaupe,
-                            scoreAlien : scoreAlienRun));
+                            scoreAlien: scoreAlienRun,
+                            tempsBoussole: tempsBoussole));
                   },
                 ),
               ],
@@ -207,86 +226,96 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(16.0),
-              margin: const EdgeInsets.only(bottom: 150.0),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                border: Border.all(color: Colors.white),
-              ),
-              child: const Text(
-                "Bienvenue sur RocketLiche",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
-            const Text(
-              "Veuillez vous connecter à votre compte",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.0,
-                fontStyle: FontStyle.italic
-              ),
-            ),
-            const SizedBox(height: 10.0),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Form(
-                key: _formKey,
+            Expanded(
+              child: SingleChildScrollView(
+                padding:
+                    const EdgeInsets.only(top: 80.0), // Ajout du Padding ici
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TextFormField(
-                      controller: _usernameController,
-                      decoration: const InputDecoration(
-                        labelText: "Nom d'utilisateur",
-                        labelStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      margin: const EdgeInsets.only(bottom: 100.0),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        border: Border.all(color: Colors.white),
+                      ),
+                      child: const Text(
+                        "Welcome to RocketLiche",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) return 'Username';
-                        return null;
-                      },
-                      style: const TextStyle(color: Colors.white),
-                      cursorColor: Colors.white,
                     ),
-                    TextFormField(
-                      controller: _passwordController,
-                      decoration: const InputDecoration(
-                        labelText: 'Mot de passe',
-                        labelStyle: TextStyle(color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: Colors.white),
-                        ),
-                      ),
-                      obscureText: true,
-                      validator: (value) {
-                        if (value?.isEmpty ?? true) return 'Mot de passe';
-                        return null;
-                      },
-                      style: const TextStyle(color: Colors.white),
-                      cursorColor: Colors.white,
+                    const Text(
+                      "Veuillez vous connecter à votre compte",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontStyle: FontStyle.italic),
                     ),
-                    const SizedBox(height: 16.0),
-                    ElevatedButton(
-                      onPressed: _onSubmit,
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.black,
-                        backgroundColor: Colors.white,
+                    const SizedBox(height: 10.0),
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: _usernameController,
+                              decoration: const InputDecoration(
+                                labelText: "Nom d'utilisateur",
+                                labelStyle: TextStyle(color: Colors.white),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value?.isEmpty ?? true) return 'Username';
+                                return null;
+                              },
+                              style: const TextStyle(color: Colors.white),
+                              cursorColor: Colors.white,
+                            ),
+                            TextFormField(
+                              controller: _passwordController,
+                              decoration: const InputDecoration(
+                                labelText: 'Mot de passe',
+                                labelStyle: TextStyle(color: Colors.white),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                                focusedBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.white),
+                                ),
+                              ),
+                              obscureText: true,
+                              validator: (value) {
+                                if (value?.isEmpty ?? true)
+                                  return 'Mot de passe';
+                                return null;
+                              },
+                              style: const TextStyle(color: Colors.white),
+                              cursorColor: Colors.white,
+                            ),
+                            const SizedBox(height: 16.0),
+                            ElevatedButton(
+                              onPressed: _onSubmit,
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.black,
+                                backgroundColor: Colors.white,
+                              ),
+                              child: const Text('Se connecter'),
+                            ),
+                          ],
+                        ),
                       ),
-                      child: const Text('Se connecter'),
                     ),
                   ],
                 ),

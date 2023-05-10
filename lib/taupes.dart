@@ -62,9 +62,7 @@ class _MoleGameState extends State<MoleGame> {
           DateTime endTime = DateTime.now();
           Duration totalTime = endTime.difference(startTime); // Durée totale
 
-          double total = totalTime.inSeconds +
-              (totalTime.inMilliseconds % 1000) /
-                  1000; // Durée totale en secondes et en millisecondes
+          double total = totalTime.inSeconds + (totalTime.inMilliseconds % 1000) / 1000; // Durée totale en secondes et en millisecondes
           if (total < temps_taupe || temps_taupe == -1) {
             // vérifie si c pas la prmeiere fois que l'on joue ou alors que notre nouveau temps est meilleur que celui dans la bdd
             temps_taupe = total;
@@ -85,10 +83,12 @@ class _MoleGameState extends State<MoleGame> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => MyHomePage(
-                                pseudo: nom_user,
-                                nbVictoires: nb_victoires,
-                                tempsTaupe: temps_taupe,
-                                scoreAlien: scoreAlienRun,)),
+                                  pseudo: nom_user,
+                                  nbVictoires: nb_victoires,
+                                  tempsTaupe: temps_taupe,
+                                  scoreAlien: scoreAlienRun,
+                                  tempsBoussole: temps_boussole,
+                                )),
                       );
                     },
                   ),

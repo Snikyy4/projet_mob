@@ -48,7 +48,7 @@ Widget build(BuildContext context) {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => navigateTo(context, const Boussole()),
-              child: const Text('Jeu de la boussole | Record : -1 secondes', style: TextStyle(color: Colors.white)),
+              child: Text("Find the planet ! | Record : $temps_boussole secondes", style: TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
             ElevatedButton(

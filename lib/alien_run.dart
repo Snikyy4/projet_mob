@@ -85,6 +85,7 @@ class _AlienRunState extends State<AlienRun> {
                                   nbVictoires: nb_victoires,
                                   tempsTaupe: temps_taupe,
                                   scoreAlien: scoreAlienRun,
+                                  tempsBoussole: temps_boussole,
                                 )),
                       );
                     },

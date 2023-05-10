@@ -18,13 +18,14 @@ class _BoussoleState extends State<Boussole> {
   final double _randomDirection =
       Random().nextInt(360).toDouble(); // direction aléatoire à pointer
   bool _gameOver = false;
-  final double _marginOfError = 2.0;
-  
+  final double _marginOfError = 0.5;
+
+  DateTime startTime = DateTime.now();
 
   @override
   void initState() {
     super.initState();
-    _startListeningMagnetometer();
+    _startListeningMagnetometer(); // initialiser le temps de début
   }
 
   @override
@@ -47,13 +48,22 @@ class _BoussoleState extends State<Boussole> {
           if ((_direction - _randomDirection).abs() <= _marginOfError) {
             _gameOver = true;
             _magnetometerSubscription.cancel();
+            DateTime endTime = DateTime.now();
+            Duration totalTime = endTime.difference(startTime); // Durée totale
+
+            double total = totalTime.inSeconds + (totalTime.inMilliseconds % 1000) / 1000; // Durée totale en secondes et en millisecondes
+            if (total < temps_boussole || temps_boussole == -1) {
+              // vérifie si c pas la prmeiere fois que l'on joue ou alors que notre nouveau temps est meilleur que celui dans la bdd
+              temps_boussole = total;
+              updateScore(temps_boussole);
+            }
             showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
                   title: const Text('FIN'),
                   content: const Text(
-                      'Fin du jeu ! Vous avez atteint la direction souhaitée'),
+                      'Fin du jeu ! Vous avez trouvé la direction de la planète !'),
                   actions: <Widget>[
                     TextButton(
                       child: const Text('OK'),
@@ -66,6 +76,7 @@ class _BoussoleState extends State<Boussole> {
                                     nbVictoires: nb_victoires,
                                     tempsTaupe: temps_taupe,
                                     scoreAlien: scoreAlienRun,
+                                    tempsBoussole: temps_boussole,
                                   )),
                         );
                       },
@@ -81,49 +92,62 @@ class _BoussoleState extends State<Boussole> {
   }
 
   @override
- Widget build(BuildContext context) {
-  return Scaffold(
-    backgroundColor: Colors.transparent,
-    body: Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("lib/assets/boussole.jpg"),
-          fit: BoxFit.cover,
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("lib/assets/boussole.jpg"),
+            fit: BoxFit.cover,
+          ),
         ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 50),
-          Text(
-            'Pointez vers: ${_randomDirection.toStringAsFixed(2)}°',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            'Direction actuelle: ${_direction.toStringAsFixed(2)}°',
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: Align(
-              alignment: Alignment.center,
-              child: Transform.rotate(
-                angle: (_direction - _randomDirection) * pi / 180,
-                child: Image.asset(
-                  'lib/assets/vaisseau.png',
-                  width: 100,
-                  height: 100,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 50),
+            Text(
+              'Orientation planète : ${_randomDirection.toStringAsFixed(2)}°',
+              style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Direction actuelle: ${_direction.toStringAsFixed(2)}°',
+              style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+            const SizedBox(height: 20),
+            Expanded(
+              child: Align(
+                alignment: Alignment.center,
+                child: Transform.rotate(
+                  angle: (_direction - _randomDirection) * pi / 180,
+                  child: Image.asset(
+                    'lib/assets/vaisseau.png',
+                    width: 100,
+                    height: 100,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
-
-
+Future<void> updateScore(double newScore) async {
+  Database db = await openDatabase('myapp.db');
+  await db.update(
+    'Users',
+    {'tempsBoussole': newScore},
+    where: 'username = ?',
+    whereArgs: [nom_user],
+  );
 }
