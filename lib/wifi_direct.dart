@@ -115,7 +115,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
           snack("connected to socket: $address");
         },
         transferUpdate: (transfer) {
-          // if (transfer.count == 0) transfer.cancelToken?.cancel();
           if (transfer.completed) {
             snack(
                 "${transfer.failed ? "failed to ${transfer.receiving ? "receive" : "send"}" : transfer.receiving ? "received" : "sent"}: ${transfer.filename}");
@@ -159,11 +158,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         await _flutterP2pConnectionPlugin.sendFiletoSocket(
       [
         filePath,
-        // "/storage/emulated/0/Download/Likee_7100105253123033459.mp4",
-        // "/storage/0E64-4628/Download/Adele-Set-Fire-To-The-Rain-via-Naijafinix.com_.mp3",
-        // "/storage/0E64-4628/Flutter SDK/p2p_plugin.apk",
-        // "/storage/emulated/0/Download/03 Omah Lay - Godly (NetNaija.com).mp3",
-        // "/storage/0E64-4628/Download/Adele-Set-Fire-To-The-Rain-via-Naijafinix.com_.mp3",
       ],
     );
     print(updates);
