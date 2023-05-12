@@ -32,6 +32,10 @@ dependencies:
     sdk: flutter
   sqflite: ^2.2.6
   sensors_plus: ^1.0.4
+  flutter_p2p_connection: ^2.0.1
+  flutter_p2p_plus: ^1.0.2
+  filesystem_picker: ^3.0.0
+
 
 
   # The following adds the Cupertino Icons font to your application.

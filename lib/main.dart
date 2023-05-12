@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:projet_mob/wifi_direct.dart';
 import 'challenge_screen.dart';
 import 'database.dart';
+import 'wifi_direct.dart';
 
 String nom_user = '';
 int nb_victoires = 0;
@@ -18,7 +20,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'RocketLiche',
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
@@ -74,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: const Text('Mode Solo'),
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () => navigateTo(context, ModeMulti()),
                   child: const Text('Mode Multi'),
                 ),
               ],
