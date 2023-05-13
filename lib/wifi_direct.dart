@@ -9,6 +9,21 @@ import 'taupes.dart';
 
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 
+final _flutterP2pConnectionPlugin = FlutterP2pConnection();
+
+double taupe1 = 0;
+double taupe2 = 0;
+int alienRun1 = 0;
+int alienRun2 = 0;
+double boussole1 = 0;
+double boussole2 = 0;
+
+bool finJ1 = false;
+bool finJ2 = false;
+
+String nomJ1 = '';
+String nomJ2 = '';
+
 class ModeMulti extends StatelessWidget {
   const ModeMulti({super.key});
 
@@ -18,38 +33,36 @@ class ModeMulti extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
-      home: MyHomePage(),
-
+      home: const MultiPage(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class MultiPage extends StatefulWidget {
+  const MultiPage({super.key});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<MultiPage> createState() => _MultiPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
-  final TextEditingController msgText = TextEditingController();
-  final _flutterP2pConnectionPlugin = FlutterP2pConnection();
-  List<DiscoveredPeers> peers = [];
+class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
+  List<DiscoveredPeers> _peers = [];
   WifiP2PInfo? wifiP2PInfo;
   StreamSubscription<WifiP2PInfo>? _streamWifiInfo;
   StreamSubscription<List<DiscoveredPeers>>? _streamPeers;
+  bool _discovering = false;
+  String deviceConnected = '';
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
+    _startDiscovery();
     _init();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    _flutterP2pConnectionPlugin.unregister();
+    _stopDiscovery();
     super.dispose();
   }
 
@@ -63,6 +76,8 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   }
 
   void _init() async {
+    finJ1 = false;
+    finJ2 = false;
     await _flutterP2pConnectionPlugin.initialize();
     await _flutterP2pConnectionPlugin.register();
     _streamWifiInfo =
@@ -73,12 +88,37 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
     });
     _streamPeers = _flutterP2pConnectionPlugin.streamPeers().listen((event) {
       setState(() {
-        peers = event;
+        _peers = event;
+        print(_peers);
       });
     });
   }
 
-  Future startSocket() async {
+  void _startDiscovery() async {
+    await _flutterP2pConnectionPlugin.discover();
+    setState(() {
+      _discovering = true;
+    });
+  }
+
+  void _stopDiscovery() async {
+    await _flutterP2pConnectionPlugin.stopDiscovery();
+    setState(() {
+      _discovering = false;
+    });
+  }
+
+  void _connectToDevice(DiscoveredPeers device) async {
+    try {
+      await _flutterP2pConnectionPlugin.connect(device.deviceAddress);
+      // Création de la socket
+      deviceConnected = device.deviceName;
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future startSocket() async { //Joueur 1
     if (wifiP2PInfo != null) {
       bool started = await _flutterP2pConnectionPlugin.startSocket(
         groupOwnerAddress: wifiP2PInfo!.groupOwnerAddress,
@@ -86,6 +126,9 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         maxConcurrentDownloads: 2,
         deleteOnError: true,
         onConnect: (name, address) {
+          nomJ1 = nom_user;
+          navigateTo(
+              context, const MoleGame(isMultiplayer: true, isPlayerOne: true));
           snack("$name connected to socket with address: $address");
         },
         transferUpdate: (transfer) {
@@ -97,14 +140,29 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               "ID: ${transfer.id}, FILENAME: ${transfer.filename}, PATH: ${transfer.path}, COUNT: ${transfer.count}, TOTAL: ${transfer.total}, COMPLETED: ${transfer.completed}, FAILED: ${transfer.failed}, RECEIVING: ${transfer.receiving}");
         },
         receiveString: (req) async {
-          snack(req);
+          print('joueur1 recoit du joueur2');
+          if (req.contains('T2')) {
+            print('a $req');
+            List<String> tmp = req.split('/');
+            taupe2 = double.parse(tmp[1]);
+            //snack('joueur 2 envoie valeur taupe $taupe2');
+            print("$finJ1 kaka $finJ2");
+          }
+          if (req.contains('AR2')) {
+             print('b $req');
+            alienRun2 = int.parse(req.split('/')[1]);
+            finJ2 = true;
+            print("$finJ1 lol $finJ2");
+            //snack('joueur 2 envoie valeur alien $alienRun2');
+          }
         },
       );
       snack("open socket: $started");
+      // ignore: use_build_context_synchronously
     }
   }
 
-  Future connectToSocket() async {
+  Future connectToSocket() async { // Joueur 2
     if (wifiP2PInfo != null) {
       await _flutterP2pConnectionPlugin.connectToSocket(
         groupOwnerAddress: wifiP2PInfo!.groupOwnerAddress,
@@ -112,7 +170,13 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         maxConcurrentDownloads: 3,
         deleteOnError: true,
         onConnect: (address) {
-          snack("connected to socket: $address");
+          nomJ2 = nom_user;
+          navigateTo(
+              context,
+              const MoleGame(
+                isMultiplayer: true,
+                isPlayerOne: false,
+              ));
         },
         transferUpdate: (transfer) {
           if (transfer.completed) {
@@ -123,7 +187,20 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
               "ID: ${transfer.id}, FILENAME: ${transfer.filename}, PATH: ${transfer.path}, COUNT: ${transfer.count}, TOTAL: ${transfer.total}, COMPLETED: ${transfer.completed}, FAILED: ${transfer.failed}, RECEIVING: ${transfer.receiving}");
         },
         receiveString: (req) async {
-          snack(req);
+          if (req.contains('T1')) {
+            print('c $req');
+            List<String> tmp = req.split('/');
+            taupe1 = double.parse(tmp[1]);
+            //snack('joueur 1 envoie valeur taupe $taupe1');
+            print("$finJ1 pour $finJ2");
+          }
+          if (req.contains('AR1')) {
+            print('d $req');
+            alienRun1 = int.parse(req.split('/')[1]);
+            finJ1 = true;
+            //snack('joueur 1 envoie valeur alien $alienRun1');
+            print("$finJ1 avec $finJ2");
+          }
         },
       );
     }
@@ -138,29 +215,6 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
         ),
       ),
     );
-  }
-
-  Future sendMessage(texte) async {
-    _flutterP2pConnectionPlugin.sendStringToSocket(texte);
-  }
-
-  Future sendFile(bool phone) async {
-    String? filePath = await FilesystemPicker.open(
-      context: context,
-      rootDirectory: Directory(phone ? "/storage/emulated/0/" : "/storage/"),
-      fsType: FilesystemType.file,
-      fileTileSelectMode: FileTileSelectMode.wholeTile,
-      showGoUp: true,
-      folderIconColor: Colors.blue,
-    );
-    if (filePath == null) return;
-    List<TransferUpdate>? updates =
-        await _flutterP2pConnectionPlugin.sendFiletoSocket(
-      [
-        filePath,
-      ],
-    );
-    print(updates);
   }
 
   void snack(String msg) async {
@@ -178,140 +232,61 @@ class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter p2p connection plugin'),
+        title: const Text('Discovery'),
       ),
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 100,
-              width: MediaQuery.of(context).size.width,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: peers.length,
-                itemBuilder: (context, index) => Center(
-                  child: GestureDetector(
-                    onTap: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => Center(
-                          child: AlertDialog(
-                            content: SizedBox(
-                              height: 200,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("name: ${peers[index].deviceName}"),
-                                  Text(
-                                      "address: ${peers[index].deviceAddress}"),
-                                  Text(
-                                      "isGroupOwner: ${peers[index].isGroupOwner}"),
-                                  Text(
-                                      "isServiceDiscoveryCapable: ${peers[index].isServiceDiscoveryCapable}"),
-                                  Text(
-                                      "primaryDeviceType: ${peers[index].primaryDeviceType}"),
-                                  Text(
-                                      "secondaryDeviceType: ${peers[index].secondaryDeviceType}"),
-                                  Text("status: ${peers[index].status}"),
-                                ],
-                              ),
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () async {
-                                  Navigator.of(context).pop();
-                                  bool? bo = await _flutterP2pConnectionPlugin
-                                      .connect(peers[index].deviceAddress);
-                                  snack("connected: $bo");
-                                },
-                                child: const Text("connect"),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: 80,
-                      width: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      child: Center(
-                        child: Text(
-                          peers[index]
-                              .deviceName
-                              .toString()
-                              .characters
-                              .first
-                              .toUpperCase(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 30,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                bool? discovering =
-                    await _flutterP2pConnectionPlugin.discover();
-                snack("discovering $discovering");
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (_discovering) const CircularProgressIndicator(),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _peers.length,
+              itemBuilder: (BuildContext context, int index) {
+                final device = _peers[index];
+                return ListTile(
+                  title: Text(device.deviceName),
+                  subtitle: Text(device.deviceAddress),
+                  onTap: () => _connectToDevice(device),
+                );
               },
-              child: const Text("discover"),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                bool? stopped =
-                    await _flutterP2pConnectionPlugin.stopDiscovery();
-                snack("stopped discovering $stopped");
-              },
-              child: const Text("stop discovery"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                startSocket();
-              },
-              child: const Text("open a socket"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                connectToSocket();
-              },
-              child: const Text("connect to socket"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                closeSocketConnection();
-              },
-              child: const Text("close socket"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                bool? removed = await _flutterP2pConnectionPlugin.removeGroup();
-                snack("removed group: $removed");
-              },
-              child: const Text("remove group/disconnect"),
-            ),
-            ElevatedButton(
-              onPressed: () => {
-                navigateTo(context, const MoleGame()),
-                sendMessage(temps_taupe)
-                },
-              child: const Text("Lancement du 1vs1"),
-            ),
-          ],
-        ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              await _flutterP2pConnectionPlugin.removeGroup();
+              snack("Déco");
+            },
+            child: const Text("Se déco"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              startSocket();
+            },
+            child: const Text("open a socket"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              connectToSocket();
+            },
+            child: const Text("connect to socket"),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              closeSocketConnection();
+            },
+            child: const Text("close socket"),
+          ),
+          Text('Connected to: $deviceConnected'),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(_discovering ? Icons.stop : Icons.search),
+        onPressed: _discovering ? _stopDiscovery : _startDiscovery,
       ),
     );
   }
+}
+
+Future sendMessage(msg) async {
+  _flutterP2pConnectionPlugin.sendStringToSocket(msg);
 }

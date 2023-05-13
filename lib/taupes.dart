@@ -2,13 +2,19 @@
 
 import 'dart:async';
 import 'dart:math';
+import 'package:projet_mob/alien_run.dart';
 import 'package:projet_mob/challenge_screen.dart';
 import 'package:sqflite/sqflite.dart';
 import 'main.dart';
 import 'package:flutter/material.dart';
+import 'wifi_direct.dart';
 
 class MoleGame extends StatefulWidget {
-  const MoleGame({super.key});
+  final bool isMultiplayer;
+  final bool? isPlayerOne;
+
+  const MoleGame({Key? key, required this.isMultiplayer, this.isPlayerOne})
+      : super(key: key);
 
   @override
   _MoleGameState createState() => _MoleGameState();
@@ -62,44 +68,92 @@ class _MoleGameState extends State<MoleGame> {
           DateTime endTime = DateTime.now();
           Duration totalTime = endTime.difference(startTime); // Durée totale
 
-          double total = totalTime.inSeconds + (totalTime.inMilliseconds % 1000) / 1000; // Durée totale en secondes et en millisecondes
-          if (total < temps_taupe || temps_taupe == -1) {
-            // vérifie si c pas la prmeiere fois que l'on joue ou alors que notre nouveau temps est meilleur que celui dans la bdd
-            temps_taupe = total;
-            updateScore(temps_taupe);
+          double total = totalTime.inSeconds +
+              (totalTime.inMilliseconds % 1000) /
+                  1000; // Durée totale en secondes et en millisecondes
+          if (!widget.isMultiplayer) {
+            //Mode solo
+            if (total < temps_taupe || temps_taupe == -1) {
+              // vérifie si c pas la prmeiere fois que l'on joue ou alors que notre nouveau temps est meilleur que celui dans la bdd
+              temps_taupe = total;
+              updateScore(temps_taupe);
+            }
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('FIN'),
+                  content: Text(
+                      'Fin du jeu ! Vous avez tué 5 aliens en $total secondes'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('OK'),
+                      onPressed: () async {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyHomePage(
+                                    pseudo: nom_user,
+                                    nbVictoires: nb_victoires,
+                                    tempsTaupe: temps_taupe,
+                                    scoreAlien: scoreAlienRun,
+                                    tempsBoussole: temps_boussole,
+                                  )),
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            // Mode Multi
+            
+            if (total < temps_taupe || temps_taupe == -1) {
+              // vérifie si c pas la prmeiere fois que l'on joue ou alors que notre nouveau temps est meilleur que celui dans la bdd
+              temps_taupe = total;
+              updateScore(temps_taupe);
+            }
+            if (widget.isPlayerOne!) {
+              taupe1 = total;
+              sendMessage("T1/$taupe1");
+              showDia(total, true);
+            } else {
+              taupe2 = total;
+              sendMessage("T2/$taupe2");
+              showDia(total, false);
+            }
           }
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('FIN'),
-                content: Text(
-                    'Fin du jeu ! Vous avez tué 5 aliens en $total secondes'),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('OK'),
-                    onPressed: () async {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MyHomePage(
-                                  pseudo: nom_user,
-                                  nbVictoires: nb_victoires,
-                                  tempsTaupe: temps_taupe,
-                                  scoreAlien: scoreAlienRun,
-                                  tempsBoussole: temps_boussole,
-                                )),
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
-          );
         }
         _moles[index] = false;
       });
     }
+  }
+
+  void showDia(double total, bool who) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('FIN'),
+          content:
+              Text('Fin du jeu ! Vous avez tué 5 aliens en $total secondes'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Jeu suivant'),
+              onPressed: () async {
+                navigateTo(
+                    context,
+                    AlienRun(
+                      isMultiplayer: true,
+                      isPlayerOne: who,
+                    ));
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

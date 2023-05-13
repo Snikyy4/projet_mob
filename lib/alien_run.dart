@@ -2,11 +2,20 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:projet_mob/challenge_screen.dart';
+import 'package:projet_mob/finMultijoueur.dart';
+import 'package:projet_mob/wifi_direct.dart';
 import 'package:sqflite/sqflite.dart';
 
+import 'wifi_direct.dart';
 import 'main.dart';
 
 class AlienRun extends StatefulWidget {
+  final bool isMultiplayer;
+  final bool? isPlayerOne;
+
+  const AlienRun({Key? key, required this.isMultiplayer, this.isPlayerOne})
+      : super(key: key);
+
   @override
   _AlienRunState createState() => _AlienRunState();
 }
@@ -59,41 +68,62 @@ class _AlienRunState extends State<AlienRun> {
         if (DateTime.now().difference(startTime).inSeconds >= 30) {
           _end = true;
           timer.cancel();
+          if (!widget.isMultiplayer) {
+            // Mode solo
+            if (_score > scoreAlienRun || _score == -1) {
+              // Check if it's the first time playing or if the new score is better than the one in the database
+              scoreAlienRun = _score;
+              updateScore(scoreAlienRun);
+            }
 
-          if (_score > scoreAlienRun || _score == -1) {
-            // Check if it's the first time playing or if the new score is better than the one in the database
-            scoreAlienRun = _score;
-            updateScore(scoreAlienRun);
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('FIN'),
+                  content:
+                      Text('Fin du jeu ! Vous avez obtenu un score de $_score'),
+                  actions: <Widget>[
+                    TextButton(
+                      child: const Text('OK'),
+                      onPressed: () async {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyHomePage(
+                                    pseudo: nom_user,
+                                    nbVictoires: nb_victoires,
+                                    tempsTaupe: temps_taupe,
+                                    scoreAlien: scoreAlienRun,
+                                    tempsBoussole: temps_boussole,
+                                  )),
+                        );
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          } else {
+            // Mode Multi
+            if (_score > scoreAlienRun || _score == -1) {
+              // Check if it's the first time playing or if the new score is better than the one in the database
+              scoreAlienRun = _score;
+              updateScore(scoreAlienRun);
+            }
+
+            if (widget.isPlayerOne!) {
+              // Joueur 1
+              alienRun1 = _score;
+              sendMessage("AR1/$alienRun1");
+              showDia(_score, true);
+            } else {
+              // Joueur 2
+              alienRun2 = _score;
+              sendMessage("AR2/$alienRun2");
+              showDia(_score, false);
+            }
           }
-
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('FIN'),
-                content:
-                    Text('Fin du jeu ! Vous avez obtenu un score de $_score'),
-                actions: <Widget>[
-                  TextButton(
-                    child: const Text('OK'),
-                    onPressed: () async {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => MyHomePage(
-                                  pseudo: nom_user,
-                                  nbVictoires: nb_victoires,
-                                  tempsTaupe: temps_taupe,
-                                  scoreAlien: scoreAlienRun,
-                                  tempsBoussole: temps_boussole,
-                                )),
-                      );
-                    },
-                  ),
-                ],
-              );
-            },
-          );
         }
       });
     });
@@ -120,6 +150,28 @@ class _AlienRunState extends State<AlienRun> {
         timer.cancel();
       }
     });
+  }
+
+
+  void showDia(int score, bool who) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('FIN'),
+          content: Text('Fin du jeu ! Vous avez obtenu un score de $score'),
+          actions: <Widget>[
+
+            TextButton(
+              child: const Text('Résultat'),
+              onPressed: () async {
+                navigateTo(context, FinMultijoueur());
+              },
+            ),
+        ],
+        );
+      },
+    );
   }
 
   void spawnBlock() {
@@ -206,7 +258,6 @@ class _AlienRunState extends State<AlienRun> {
                       ),
                     ),
                   ),
-                  
                 ],
               ),
             ),

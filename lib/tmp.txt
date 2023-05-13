@@ -1,0 +1,147 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:async';
+
+class ModeMulti extends StatefulWidget {
+  @override
+  _ModeMultiState createState() => _ModeMultiState();
+}
+
+class _ModeMultiState extends State<ModeMulti> with WidgetsBindingObserver {
+  FlutterP2pConnection _flutterP2pConnectionPlugin = FlutterP2pConnection();
+  StreamSubscription<List<DiscoveredPeers>>? _streamPeers;
+  WifiP2PInfo? wifiP2PInfo;
+  StreamSubscription<WifiP2PInfo>? _streamWifiInfo;
+  List<DiscoveredPeers> peers = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addObserver(this);
+    initP2PConnection();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    _streamPeers?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      stopDiscovery();
+    } else if (state == AppLifecycleState.resumed) {
+      startDiscovery();
+    }
+  }
+
+  void initP2PConnection() async {
+    if (await Permission.location.request().isGranted) {
+      if (await Permission.storage.request().isGranted) {
+        await _flutterP2pConnectionPlugin.initialize();
+        startDiscovery();
+      }
+    }
+  }
+
+  void startDiscovery() async {
+    try {
+      _streamPeers = _flutterP2pConnectionPlugin.streamPeers().listen((event) {
+        setState(() {
+          peers = event;
+          print(peers[0].deviceAddress);
+        });
+      });
+      await _flutterP2pConnectionPlugin.discover();
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  void stopDiscovery() async {
+    _streamPeers?.cancel();
+    await _flutterP2pConnectionPlugin.stopDiscovery();
+  }
+
+    void connectToDevice(DiscoveredPeers device) async {
+    try {
+      _streamWifiInfo =
+          _flutterP2pConnectionPlugin.streamWifiP2PInfo().listen((event) {
+        // Handle changes in connection
+        setState(() {
+          wifiP2PInfo = event;
+          print(event);
+          print('tentative de co');
+        });
+      });
+
+      await _flutterP2pConnectionPlugin.connect(device.deviceAddress);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Wifi Direct'),
+      ),
+      body: peers.isEmpty
+          ? const Center(
+              child: Text('No peers found.'),
+            )
+          : ListView.builder(
+              itemCount: peers.length,
+              itemBuilder: (BuildContext context, int index) {
+                DiscoveredPeers peer = peers[index];
+                return ListTile(
+                  title: Text(peer.deviceName),
+                  subtitle: Text(peer.deviceAddress),
+                  onTap: () {
+                    connectToDevice(peer);
+                  },
+                );
+              },
+            ),
+    );
+  }
+}
+
+
+
+
+Widget build(BuildContext context) {
+  return Scaffold(
+    appBar: AppBar(
+      title: const Text('Discovery'),
+    ),
+    body: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        if (_discovering)
+          const CircularProgressIndicator(),
+        Expanded(
+          child: ListView.builder(
+            itemCount: _peers.length,
+            itemBuilder: (BuildContext context, int index) {
+              final device = _peers[index];
+              return ListTile(
+                title: Text(device.deviceName),
+                subtitle: Text(device.deviceAddress),
+                onTap: () => _connectToDevice(device),
+              );
+            },
+          ),
+        ),
+      ],
+    ),
+    floatingActionButton: FloatingActionButton(
+      child: Icon(_discovering ? Icons.stop : Icons.search),
+      onPressed: _discovering ? _stopDiscovery : _startDiscovery,
+    ),
+  );
+}

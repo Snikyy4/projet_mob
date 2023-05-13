@@ -42,17 +42,17 @@ Widget build(BuildContext context) {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => navigateTo(context, const MoleGame()),
+              onPressed: () => navigateTo(context, const MoleGame(isMultiplayer: false)),
               child: Text("Tape l'alien ! | Record : $temps_taupe secondes", style: const TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => navigateTo(context, const Boussole()),
-              child: Text("Find the planet ! | Record : $temps_boussole secondes", style: TextStyle(color: Colors.white)),
+              child: Text("Find the planet ! | Record : $temps_boussole secondes", style: const TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => navigateTo(context, AlienRun()),
+              onPressed: () => navigateTo(context, const AlienRun(isMultiplayer: false,)),
               child: Text("Alien Run | Record : $scoreAlienRun points", style: const TextStyle(color: Colors.white)),
             ),
             const SizedBox(height: 20),
