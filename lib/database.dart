@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _initDatabase() async {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, 'myapp.db');
-    await deleteDatabase(path); //si on veut remettre à jour la BDD
+    //await deleteDatabase(path); //si on veut remettre à jour la BDD
     _database = await openDatabase(path, version: 1, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE Users (
