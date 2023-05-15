@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:projet_mob/challenge_screen.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'dart:math';
 import 'dart:async';
@@ -26,6 +25,7 @@ class _MazeGameState extends State<MazeGame> {
   @override
   void initState() {
     super.initState();
+    
     startTime = DateTime.now();
     accelSub = accelerometerEvents.listen((AccelerometerEvent event) {
       if (hasWon) return; // Don't update ball position if game is won
@@ -48,7 +48,7 @@ class _MazeGameState extends State<MazeGame> {
           ballY = screenHeight;
         }
 
-        //regarde si la balle est dans le troue
+        //regarde si la balle est dans le trou
         for (int i = 0; i < holes.length; i++) {
           Offset hole = holes[i];
           if (ballX >= hole.dx - 10 &&
@@ -122,19 +122,18 @@ class _MazeGameState extends State<MazeGame> {
     accelSub.cancel();
     super.dispose();
   }
-
-  void generateHole() {
-    Random random = Random();
-    double x = random.nextDouble() * screenWidth;
-    double y = random.nextDouble() * screenHeight;
-    holes = [Offset(x, y)]; // Remplace les trous existants par le nouveau trou
-  }
+void generateHole() {
+  Random random = Random();
+  double x = random.nextDouble() * screenWidth;
+  double y = random.nextDouble() * screenHeight;
+  holes = [Offset(x, y)]; // Remplace les trous existants par le nouveau trou
+}
 
   @override
   Widget build(BuildContext context) {
   // Get screen dimensions
-  double screenWidth = MediaQuery.of(context).size.width;
-  double screenHeight = MediaQuery.of(context).size.height;
+   screenWidth = MediaQuery.of(context).size.width;
+   screenHeight = MediaQuery.of(context).size.height;
 
   if (holes.isEmpty && holeCount < 5) {
     generateHole();
@@ -237,7 +236,7 @@ Future<void> updateScore(double newScore) async {
   Database db = await openDatabase('myapp.db');
   await db.update(
     'Users',
-    {'tempsTaupe': newScore},
+    {'temps_lab': newScore},
     where: 'username = ?',
     whereArgs: [nom_user],
   );
