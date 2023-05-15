@@ -4,8 +4,6 @@ import 'main.dart';
 import 'wifi_direct.dart';
 
 class FinMultijoueur extends StatelessWidget {
-
-
   FinMultijoueur({
     Key? key,
   }) : super(key: key);
@@ -16,7 +14,7 @@ class FinMultijoueur extends StatelessWidget {
   String determinerGagnant() {
     if (taupe1 < taupe2) {
       cptJoueur1++;
-    } else if (taupe1  > taupe2) {
+    } else if (taupe1 > taupe2) {
       cptJoueur2++;
     }
 
@@ -27,11 +25,23 @@ class FinMultijoueur extends StatelessWidget {
     }
 
     if (cptJoueur1 > cptJoueur2) {
-      int newNbVic = nb_victoires+1;
-      updateScore(newNbVic);
+      if (nom_user == nomJ1) {
+        print(nb_victoires);
+        nb_victoires++;
+        print("$nb_victoires et après");
+        updateScore(nb_victoires);
+      }
+
       return "$nomJ1 gagne !";
     } else if (cptJoueur1 < cptJoueur2) {
-      return "Joueur 2 gagne !";
+      if (nom_user == nomJ2) {
+        print(nb_victoires);
+        nb_victoires++;
+        print("$nb_victoires et après");
+        updateScore(nb_victoires);
+      }
+
+      return "$nomJ2 gagne !";
     } else {
       return "Égalité";
     }
@@ -41,36 +51,69 @@ class FinMultijoueur extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Fin du jeu"),
+        title: const Text("Résultats"),
+        automaticallyImplyLeading: false, // Désactiver le bouton de retour
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
-              "Score Joueur 1 - Jeu Taupe : ${taupe1.toStringAsFixed(2)}",
-              style: const TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "Score Joueur 2 - Jeu Taupe : ${taupe2.toStringAsFixed(2)}",
-              style: const TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "Score Joueur 1 - Jeu Alien Run : ${alienRun1.toStringAsFixed(2)}",
-              style: const TextStyle(fontSize: 24),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              "Score Joueur 2 - Jeu Alien Run : ${alienRun2.toStringAsFixed(2)}",
-              style: const TextStyle(fontSize: 24),
+            Expanded(
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          nomJ1,
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Score Jeu des Taupes : ${taupe1.toStringAsFixed(2)} sec",
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Score Jeu Alien Run : ${alienRun1.toStringAsFixed(2)} points",
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          nomJ2,
+                          style: const TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          "Score Jeu des Taupes : ${taupe2.toStringAsFixed(2)} sec",
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Score Jeu Alien Run : ${alienRun2.toStringAsFixed(2)} points",
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 32),
             Text(
-              "${determinerGagnant()}",
+              determinerGagnant(),
               style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 32),
             ElevatedButton(
@@ -78,14 +121,15 @@ class FinMultijoueur extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MyHomePage(
-                            pseudo: nom_user,
-                            nbVictoires: nb_victoires,
-                            tempsTaupe: temps_taupe,
-                            scoreAlien: scoreAlienRun,
-                            tempsBoussole: temps_boussole,
-                            tempsLab: temps_lab,
-                          )),
+                    builder: (context) => MyHomePage(
+                      pseudo: nom_user,
+                      nbVictoires: nb_victoires,
+                      tempsTaupe: temps_taupe,
+                      scoreAlien: scoreAlienRun,
+                      tempsBoussole: temps_boussole,
+                      tempsLab: temps_lab,
+                    ),
+                  ),
                 );
               },
               child: const Text("Menu principal"),

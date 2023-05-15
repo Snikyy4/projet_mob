@@ -19,6 +19,9 @@ int alienRun2 = 0;
 bool finJ1 = false;
 bool finJ2 = false;
 
+int nbVicJ1 = 0;
+int nbVicJ2 = 0;
+
 String nomJ1 = '';
 String nomJ2 = '';
 
@@ -143,7 +146,14 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
           if (req.contains('AR2')) {
             alienRun2 = int.parse(req.split('/')[1]);
             finJ2 = true;
-            //snack('joueur 2 envoie valeur alien $alienRun2');
+          }
+          if(req.contains('NV2')){ //nb victoires
+            nbVicJ2 = int.parse(req.split('/')[1]);
+            print("$req et $nbVicJ2");
+          }
+          if(req.contains('P2')){ //nom player
+          List<String> tmp = req.split('/');
+          nomJ2 = tmp[1];
           }
         },
       );
@@ -175,13 +185,20 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
               "ID: ${transfer.id}, FILENAME: ${transfer.filename}, PATH: ${transfer.path}, COUNT: ${transfer.count}, TOTAL: ${transfer.total}, COMPLETED: ${transfer.completed}, FAILED: ${transfer.failed}, RECEIVING: ${transfer.receiving}");
         },
         receiveString: (req) async {
-          if (req.contains('T1')) {
+          if (req.contains('T1')) { //temps taupe
             List<String> tmp = req.split('/');
             taupe1 = double.parse(tmp[1]);
           }
-          if (req.contains('AR1')) {
+          if (req.contains('AR1')) { // score alien run
             alienRun1 = int.parse(req.split('/')[1]);
             finJ1 = true;
+          }
+          if(req.contains('NV1')){ //nb victoires
+            nbVicJ1 = int.parse(req.split('/')[1]);
+          }
+          if(req.contains('P1')){ //nom player
+          List<String> tmp = req.split('/');
+          nomJ1 = tmp[1];
           }
         },
       );
@@ -189,14 +206,7 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
   }
 
   Future closeSocketConnection() async {
-    bool closed = _flutterP2pConnectionPlugin.closeSocket();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "closed: $closed",
-        ),
-      ),
-    );
+    _flutterP2pConnectionPlugin.closeSocket();
   }
 
   void snack(String msg) async {

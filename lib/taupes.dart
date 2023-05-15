@@ -118,10 +118,14 @@ class _MoleGameState extends State<MoleGame> {
             if (widget.isPlayerOne!) {
               taupe1 = total;
               sendMessage("T1/$taupe1");
+              sendMessage("NV1/$nb_victoires");
+              sendMessage("P1/$nom_user");
               showDia(total, true);
             } else {
               taupe2 = total;
               sendMessage("T2/$taupe2");
+              sendMessage("NV2/$nb_victoires");
+              sendMessage("P2/$nom_user");
               showDia(total, false);
             }
           }
