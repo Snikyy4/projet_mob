@@ -77,6 +77,7 @@ class _BoussoleState extends State<Boussole> {
                                     tempsTaupe: temps_taupe,
                                     scoreAlien: scoreAlienRun,
                                     tempsBoussole: temps_boussole,
+                                    tempsLab: temps_lab,
                                   )),
                         );
                       },

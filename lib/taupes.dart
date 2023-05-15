@@ -98,6 +98,7 @@ class _MoleGameState extends State<MoleGame> {
                                     tempsTaupe: temps_taupe,
                                     scoreAlien: scoreAlienRun,
                                     tempsBoussole: temps_boussole,
+                                    tempsLab: temps_lab,
                                   )),
                         );
                       },

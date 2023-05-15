@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.pseudo, required this.nbVictoires, required this.tempsTaupe, required this.scoreAlien, required this.tempsBoussole})
+  const MyHomePage({Key? key, required this.pseudo, required this.nbVictoires, required this.tempsTaupe, required this.scoreAlien, required this.tempsBoussole, required this.tempsLab})
       : super(key: key);
 
   final String pseudo;
@@ -39,6 +39,7 @@ class MyHomePage extends StatefulWidget {
   final double tempsTaupe;
   final int scoreAlien;
   final double tempsBoussole;
+  final double tempsLab;
 
   @override
   _MyHomePageState createState() => _MyHomePageState();
@@ -53,6 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
     temps_taupe = widget.tempsTaupe;
     scoreAlienRun = widget.scoreAlien;
     temps_boussole = widget.tempsBoussole;
+    temps_lab=widget.tempsLab;
   }
 
   @override

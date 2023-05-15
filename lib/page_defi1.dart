@@ -102,7 +102,7 @@ void _onGuess(String guess) {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
-                    navigateTo(context, MyHomePage(pseudo: nom_user, nbVictoires: nb_victoires, tempsTaupe: temps_taupe, scoreAlien: scoreAlienRun, tempsBoussole: temps_boussole,));
+                    navigateTo(context, MyHomePage(pseudo: nom_user, nbVictoires: nb_victoires, tempsTaupe: temps_taupe, scoreAlien: scoreAlienRun, tempsBoussole: temps_boussole,tempsLab: temps_lab,));
                   },
                   child: const Text('OK'),
                 ),
@@ -167,7 +167,7 @@ void _onGuess(String guess) {
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
-                  navigateTo(context, MyHomePage(pseudo: nom_user, nbVictoires: nb_victoires, tempsTaupe: temps_taupe,scoreAlien: scoreAlienRun, tempsBoussole: temps_boussole,));
+                  navigateTo(context, MyHomePage(pseudo: nom_user, nbVictoires: nb_victoires, tempsTaupe: temps_taupe,scoreAlien: scoreAlienRun, tempsBoussole: temps_boussole,tempsLab: temps_lab,));
                 },
                 child: const Text('OK'),
               ),

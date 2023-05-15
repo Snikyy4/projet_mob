@@ -58,7 +58,7 @@ Widget build(BuildContext context) {
             const SizedBox(height: 20),
             ElevatedButton(
              onPressed: () => navigateTo(context, MazeGame()),
-              child: const Text('Labyrinthe | Record : -1 secondes', style: TextStyle(color: Colors.white)),
+              child: Text("Labyrinthe | Record : $temps_lab secondes", style: TextStyle(color: Colors.white)),
             ),
           ],
         ),

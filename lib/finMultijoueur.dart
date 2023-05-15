@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 import 'main.dart';
 import 'wifi_direct.dart';
 
@@ -26,7 +27,9 @@ class FinMultijoueur extends StatelessWidget {
     }
 
     if (cptJoueur1 > cptJoueur2) {
-      return "Joueur 1 gagne !";
+      int newNbVic = nb_victoires+1;
+      updateScore(newNbVic);
+      return "$nomJ1 gagne !";
     } else if (cptJoueur1 < cptJoueur2) {
       return "Joueur 2 gagne !";
     } else {
@@ -81,6 +84,7 @@ class FinMultijoueur extends StatelessWidget {
                             tempsTaupe: temps_taupe,
                             scoreAlien: scoreAlienRun,
                             tempsBoussole: temps_boussole,
+                            tempsLab: temps_lab,
                           )),
                 );
               },
@@ -91,4 +95,14 @@ class FinMultijoueur extends StatelessWidget {
       ),
     );
   }
+}
+
+Future<void> updateScore(int newScore) async {
+  Database db = await openDatabase('myapp.db');
+  await db.update(
+    'Users',
+    {'nbVictoires': newScore},
+    where: 'username = ?',
+    whereArgs: [nom_user],
+  );
 }

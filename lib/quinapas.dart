@@ -191,7 +191,8 @@ class _LequelNAPasState extends State<LequelNAPas> {
                                 nbVictoires: nb_victoires,
                                 tempsTaupe: temps_taupe,
                                 scoreAlien: scoreAlienRun,
-                                tempsBoussole: temps_boussole,)),
+                                tempsBoussole: temps_boussole,
+                                tempsLab: temps_lab,)),
                       );
                     },
                   ),

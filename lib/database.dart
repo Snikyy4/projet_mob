@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _initDatabase() async {
     final databasesPath = await getDatabasesPath();
     final path = join(databasesPath, 'myapp.db');
-    //await deleteDatabase(path); //si on veut remettre à jour la BDD
+    await deleteDatabase(path); //si on veut remettre à jour la BDD
     _database = await openDatabase(path, version: 1, onCreate: (db, version) {
       db.execute('''
         CREATE TABLE Users (
@@ -35,7 +35,8 @@ class _LoginPageState extends State<LoginPage> {
           nbVictoires INTEGER,
           tempsTaupe REAL,
           scoreAlienRun INTEGER,
-          tempsBoussole REAL
+          tempsBoussole REAL,
+          tempsLab REAL
         )
       ''');
     });
@@ -104,15 +105,29 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  Future<double> getTempsLabByUsername(String username) async {
+    final db = await _database;
+    final result = await db.rawQuery(
+      'SELECT tempsLab FROM Users WHERE username = ?',
+      [username],
+    );
+    if (result.isNotEmpty) {
+      return result.first['tempsLab'] as double;
+    } else {
+      return 0;
+    }
+  }
+
   Future<void> _saveUser(String username, String password, int nbVictoires,
-      double tempsTaupe, int scoreAlienRun, double tempsBoussole) async {
+      double tempsTaupe, int scoreAlienRun, double tempsBoussole, double tempsLab) async {
     final user = {
       'username': username,
       'password': password,
       'nbVictoires': nbVictoires,
       'tempsTaupe': tempsTaupe,
       'scoreAlienRun': scoreAlienRun,
-      'tempsBoussole': tempsBoussole
+      'tempsBoussole': tempsBoussole,
+      'tempsLab' : tempsLab
     };
     await _database.insert('Users', user);
   }
@@ -124,7 +139,7 @@ class _LoginPageState extends State<LoginPage> {
 
       final user = await _getUserByUsername(username);
       if (user.isEmpty) {
-        await _saveUser(username, password, 0, -1, -1, -1);
+        await _saveUser(username, password, 0, -1, -1, -1, -1);
 
         showDialog(
           context: this.context,
@@ -144,7 +159,8 @@ class _LoginPageState extends State<LoginPage> {
                             nbVictoires: 0,
                             tempsTaupe: -1,
                             scoreAlien: -1,
-                            tempsBoussole: -1));
+                            tempsBoussole: -1,
+                            tempsLab: -1,));
                   },
                 ),
               ],
@@ -169,6 +185,7 @@ class _LoginPageState extends State<LoginPage> {
                         await getScoreAlienRunByUsername(username);
                     final tempsBoussole =
                         await getTempsBoussoleByUsername(username);
+                        final tempsLab = await getTempsLabByUsername(username);
                     // ignore: use_build_context_synchronously
                     navigateTo(
                         context,
@@ -177,7 +194,8 @@ class _LoginPageState extends State<LoginPage> {
                             nbVictoires: nbVictoires,
                             tempsTaupe: tempsTaupe,
                             scoreAlien: scoreAlienRun,
-                            tempsBoussole: tempsBoussole));
+                            tempsBoussole: tempsBoussole,
+                            tempsLab: tempsLab,));
                   },
                 ),
               ],
@@ -242,7 +260,7 @@ class _LoginPageState extends State<LoginPage> {
                         border: Border.all(color: Colors.white),
                       ),
                       child: const Text(
-                        "Welcome to RocketLiche",
+                        "Play to RocketLiche",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 24.0,

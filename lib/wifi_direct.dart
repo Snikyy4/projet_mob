@@ -15,8 +15,6 @@ double taupe1 = 0;
 double taupe2 = 0;
 int alienRun1 = 0;
 int alienRun2 = 0;
-double boussole1 = 0;
-double boussole2 = 0;
 
 bool finJ1 = false;
 bool finJ2 = false;
@@ -89,7 +87,6 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
     _streamPeers = _flutterP2pConnectionPlugin.streamPeers().listen((event) {
       setState(() {
         _peers = event;
-        print(_peers);
       });
     });
   }
@@ -129,7 +126,6 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
           nomJ1 = nom_user;
           navigateTo(
               context, const MoleGame(isMultiplayer: true, isPlayerOne: true));
-          snack("$name connected to socket with address: $address");
         },
         transferUpdate: (transfer) {
           if (transfer.completed) {
@@ -140,25 +136,17 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
               "ID: ${transfer.id}, FILENAME: ${transfer.filename}, PATH: ${transfer.path}, COUNT: ${transfer.count}, TOTAL: ${transfer.total}, COMPLETED: ${transfer.completed}, FAILED: ${transfer.failed}, RECEIVING: ${transfer.receiving}");
         },
         receiveString: (req) async {
-          print('joueur1 recoit du joueur2');
           if (req.contains('T2')) {
-            print('a $req');
             List<String> tmp = req.split('/');
             taupe2 = double.parse(tmp[1]);
-            //snack('joueur 2 envoie valeur taupe $taupe2');
-            print("$finJ1 kaka $finJ2");
           }
           if (req.contains('AR2')) {
-             print('b $req');
             alienRun2 = int.parse(req.split('/')[1]);
             finJ2 = true;
-            print("$finJ1 lol $finJ2");
             //snack('joueur 2 envoie valeur alien $alienRun2');
           }
         },
       );
-      snack("open socket: $started");
-      // ignore: use_build_context_synchronously
     }
   }
 
@@ -188,18 +176,12 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
         },
         receiveString: (req) async {
           if (req.contains('T1')) {
-            print('c $req');
             List<String> tmp = req.split('/');
             taupe1 = double.parse(tmp[1]);
-            //snack('joueur 1 envoie valeur taupe $taupe1');
-            print("$finJ1 pour $finJ2");
           }
           if (req.contains('AR1')) {
-            print('d $req');
             alienRun1 = int.parse(req.split('/')[1]);
             finJ1 = true;
-            //snack('joueur 1 envoie valeur alien $alienRun1');
-            print("$finJ1 avec $finJ2");
           }
         },
       );
@@ -232,7 +214,7 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Discovery'),
+        title: const Text('Recherche de joueurs en ligne'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -254,27 +236,26 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
           ElevatedButton(
             onPressed: () async {
               await _flutterP2pConnectionPlugin.removeGroup();
-              snack("Déco");
             },
-            child: const Text("Se déco"),
+            child: const Text("Se déconnecter"),
           ),
           ElevatedButton(
             onPressed: () async {
               startSocket();
             },
-            child: const Text("open a socket"),
+            child: const Text("Ouverture du groupe"),
           ),
           ElevatedButton(
             onPressed: () async {
               connectToSocket();
             },
-            child: const Text("connect to socket"),
+            child: const Text("Rejoindre le groupe"),
           ),
           ElevatedButton(
             onPressed: () async {
               closeSocketConnection();
             },
-            child: const Text("close socket"),
+            child: const Text("Quitter le groupe"),
           ),
           Text('Connected to: $deviceConnected'),
         ],
