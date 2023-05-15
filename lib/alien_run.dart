@@ -164,9 +164,9 @@ class _AlienRunState extends State<AlienRun> {
           actions: <Widget>[
 
             TextButton(
-              child: const Text('Résultat'),
+              child: const Text('Résultats'),
               onPressed: () async {
-                navigateTo(context, FinMultijoueur());
+                navigateTo(context, FinMultijoueur(isPlayerOne:who));
               },
             ),
         ],

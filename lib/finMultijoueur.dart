@@ -2,16 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 import 'main.dart';
 import 'wifi_direct.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 
 class FinMultijoueur extends StatelessWidget {
-  FinMultijoueur({
-    Key? key,
-  }) : super(key: key);
+  bool? isPlayerOne;
+  FinMultijoueur( {Key? key,this.isPlayerOne}) : super(key: key);
 
   int cptJoueur1 = 0;
   int cptJoueur2 = 0;
+  String winner = '';
+  AudioPlayer audioPlayer = AudioPlayer();
+  String url = 'https://www.youtube.com/watch?v=rBc-mKOKXKY';
+
+
+
 
   String determinerGagnant() {
+    audioPlayer.setUrl(url);
     if (taupe1 < taupe2) {
       cptJoueur1++;
     } else if (taupe1 > taupe2) {
@@ -25,26 +33,32 @@ class FinMultijoueur extends StatelessWidget {
     }
 
     if (cptJoueur1 > cptJoueur2) {
-      if (nom_user == nomJ1) {
-        print(nb_victoires);
+      if (nom_user == nomJ1 && isPlayerOne==true) {
         nb_victoires++;
-        print("$nb_victoires et après");
+        winner=nomJ1;
         updateScore(nb_victoires);
+        sendMessage('1/WIN');
+        //Jouer victoire
+        audioPlayer.play(url);
       }
 
       return "$nomJ1 gagne !";
     } else if (cptJoueur1 < cptJoueur2) {
-      if (nom_user == nomJ2) {
-        print(nb_victoires);
+      if (nom_user == nomJ2  && isPlayerOne==false) {
         nb_victoires++;
-        print("$nb_victoires et après");
+        winner=nomJ2;
         updateScore(nb_victoires);
+        //Jouer victoire
+        sendMessage("2/WIN");
+        audioPlayer.play(url);
       }
 
       return "$nomJ2 gagne !";
     } else {
       return "Égalité";
     }
+
+
   }
 
   @override

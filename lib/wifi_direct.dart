@@ -6,6 +6,8 @@ import 'package:projet_mob/taupes.dart';
 import 'dart:async';
 import 'main.dart';
 import 'taupes.dart';
+import 'package:audioplayers/audioplayers.dart';
+
 
 import 'package:flutter_p2p_connection/flutter_p2p_connection.dart';
 
@@ -25,8 +27,11 @@ int nbVicJ2 = 0;
 String nomJ1 = '';
 String nomJ2 = '';
 
+
 class ModeMulti extends StatelessWidget {
+  
   const ModeMulti({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +59,15 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
   bool _discovering = false;
   String deviceConnected = '';
 
+AudioPlayer audioPlayer = AudioPlayer();
+  String url = 'https://www.youtube.com/watch?v=XE6YaLtctcI';
+
+
+
   @override
   void initState() {
     super.initState();
+    audioPlayer.setUrl(url);
     _startDiscovery();
     _init();
   }
@@ -155,6 +166,10 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
           List<String> tmp = req.split('/');
           nomJ2 = tmp[1];
           }
+          if(req.contains('WIN')){
+            //Jouer défaite
+            audioPlayer.play(url);
+          }
         },
       );
     }
@@ -199,6 +214,10 @@ class _MultiPageState extends State<MultiPage> with WidgetsBindingObserver {
           if(req.contains('P1')){ //nom player
           List<String> tmp = req.split('/');
           nomJ1 = tmp[1];
+          }
+          if(req.contains('WIN')){
+            //Jouer défaite
+            audioPlayer.play(url);
           }
         },
       );

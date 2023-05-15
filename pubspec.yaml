@@ -35,6 +35,7 @@ dependencies:
   flutter_p2p_connection: ^2.0.1
   flutter_p2p_plus: ^1.0.2
   filesystem_picker: ^3.0.0
+  audioplayers: ^0.20.1
 
 
 
