@@ -3,6 +3,7 @@ import 'package:projet_mob/challenge_screen.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'dart:math';
 import 'dart:async';
+import 'main.dart';
 
 class MazeGame extends StatefulWidget {
   @override
@@ -69,13 +70,19 @@ class _MazeGameState extends State<MazeGame> {
                         "You completed the maze in ${DateTime.now().second - startTime!.second} seconds."),
                     actions: [
                       TextButton(
-                        child: Text("Menu"),
+                        child: Text("Menu principal"),
                         onPressed: () {
                           Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ChallengeScreen()),
-                          );
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MyHomePage(
+                                    pseudo: nom_user,
+                                    nbVictoires: nb_victoires,
+                                    tempsTaupe: temps_taupe,
+                                    scoreAlien: scoreAlienRun,
+                                    tempsBoussole: temps_boussole,
+                                  )),
+                        );
                         },
                       ),
                     ],

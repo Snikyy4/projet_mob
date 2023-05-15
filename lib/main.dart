@@ -9,6 +9,7 @@ int nb_victoires = 0;
 double temps_taupe = -1;
 int scoreAlienRun = -1;
 double temps_boussole = -1;
+double temps_lab = -1;
 
 void main() {
   runApp(const MyApp());

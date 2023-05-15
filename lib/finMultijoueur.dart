@@ -84,7 +84,7 @@ class FinMultijoueur extends StatelessWidget {
                           )),
                 );
               },
-              child: const Text("Retour au menu principal"),
+              child: const Text("Menu principal"),
             ),
           ],
         ),

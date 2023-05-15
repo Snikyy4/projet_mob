@@ -85,7 +85,7 @@ class _AlienRunState extends State<AlienRun> {
                       Text('Fin du jeu ! Vous avez obtenu un score de $_score'),
                   actions: <Widget>[
                     TextButton(
-                      child: const Text('OK'),
+                      child: const Text('Menu principal'),
                       onPressed: () async {
                         Navigator.pushReplacement(
                           context,

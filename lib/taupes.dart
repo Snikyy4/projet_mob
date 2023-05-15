@@ -87,7 +87,7 @@ class _MoleGameState extends State<MoleGame> {
                       'Fin du jeu ! Vous avez tué 5 aliens en $total secondes'),
                   actions: <Widget>[
                     TextButton(
-                      child: const Text('OK'),
+                      child: const Text('Menu principal'),
                       onPressed: () async {
                         Navigator.pushReplacement(
                           context,
